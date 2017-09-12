@@ -1,0 +1,22 @@
+Header:
+8 ascii_start
+8 ascii_end
+8 newline_height
+
+CharData: (ascii_end - ascii_start)x
+16 bitmap_address
+8 bitmap_width
+8 bitmap_height
+8 step_x
+8 offset_x
+8 offset_y
+
+Data:
+8 bitmap (x => y)
+
+________________________________
+Buffersize:
+9pt   64B
+12pt  64B
+18pt  128B
+24pt  256B
