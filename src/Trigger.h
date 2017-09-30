@@ -9,12 +9,12 @@
 class Trigger
 {
     // Felder
-  public:
+public:
     Delegate<> Activated;             // Wird aufgerufen, wenn der Trigger aktiviert wird
     Delegate<> Deactivated;           // Wird aufgerufen, wenn der Trigger deaktiviert wird
     static Event<> AnyActiveEvent;    // Wird ausgelöst, wenn irgendein Trigger aktiviert wird
 
-  private:
+private:
     DigitalIn* Pin;                           // Eingang für diesen Trigger
     const bool IsInverted;                    // Gibt an, ob die Aktivierung umgekehrt wird
     bool LastCheckedValue;                    // Letzter Wert, der registriert wurde
@@ -23,11 +23,11 @@ class Trigger
     const unsigned int DwellTime;             // Zeit in ms, die ein Wert gehalten werden muss um registriert zu werden
 
     // Konstruktor
-  public:
+public:
     Trigger(DigitalIn* pin, const bool isInverted = true, const unsigned int dwellTime = 50);
 
     // Methoden
-  public:
+public:
     // Muss in jedem Frame aufgerufen werden
     void Update();
 };

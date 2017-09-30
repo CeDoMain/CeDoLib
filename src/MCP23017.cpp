@@ -33,7 +33,7 @@ void MCP23017::Update()
 DigitalIn* MCP23017::GetDigitalIn(const IOPort pin, const bool isPulledUp)
 {
   PinMode(pin, isPulledUp ? INPUT_PULLUP : INPUT);
-  return new DigitalIn([this, pin, isPulledUp]() -> bool
+  return new DigitalIn([this, pin]() -> bool
   {
     return ISSET(Input, pin);
   });

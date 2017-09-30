@@ -20,7 +20,7 @@ SSD1331::SSD1331()
 {
 
 }
-void SSD1331::Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC)
+void SSD1331::Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC, bool flipHorizontal)
 {
   Pin_RST = pin_RST;
   Pin_CS = pin_CS;
@@ -41,20 +41,20 @@ void SSD1331::Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC)
   // Chip initialisieren
   byte CmdInit[] =
   {
-    Cmd_DisplayOff,           // Display ausschalten
-    Cmd_Remap, 0x72,          // Nötig für das verwendete Display
-    Cmd_MasterConf, 0x8E,     // Nötig für das verwendete Display
-    Cmd_Precharge, 0xFF,      // Nötig für das verwendete Display (auf 0xFF geändert)
-    Cmd_ClockDiv, 0xF0,       // highest FPS
-    Cmd_SecPrechargeA, 0x64,  // Nötig für das verwendete Display
-    Cmd_SecPrechargeB, 0x78,  // Nötig für das verwendete Display
-    Cmd_SecPrechargeC, 0x64,  // Nötig für das verwendete Display
-    Cmd_PrechargeLevel, 0x3E, // Nötig für das verwendete Display
-    Cmd_MasterCurrent, 0x06,  // Nötig für das verwendete Display
-    Cmd_ContrastA, 0x91,      // Nötig für das verwendete Display
-    Cmd_ContrastB, 0x50,      // Nötig für das verwendete Display
-    Cmd_ContrastC, 0x7D,      // Nötig für das verwendete Display
-    Cmd_DisplayOn             // Display einschalten
+    Cmd_DisplayOff,                 // Display ausschalten
+    Cmd_Remap, flipHorizontal ? 0x62 : 0x72,        // Nötig für das verwendete Display
+    Cmd_MasterConf, 0x8E,           // Nötig für das verwendete Display
+    Cmd_Precharge, 0xFF,            // Nötig für das verwendete Display (auf 0xFF geändert)
+    Cmd_ClockDiv, 0xF0,             // größte Bildwiederholrate
+    Cmd_SecPrechargeA, 0x64,        // Nötig für das verwendete Display
+    Cmd_SecPrechargeB, 0x78,        // Nötig für das verwendete Display
+    Cmd_SecPrechargeC, 0x64,        // Nötig für das verwendete Display
+    Cmd_PrechargeLevel, 0x3E,       // Nötig für das verwendete Display
+    Cmd_MasterCurrent, 0x06,        // Nötig für das verwendete Display
+    Cmd_ContrastA, 0x91,            // Nötig für das verwendete Display
+    Cmd_ContrastB, 0x50,            // Nötig für das verwendete Display
+    Cmd_ContrastC, 0x7D,            // Nötig für das verwendete Display
+    Cmd_DisplayOn                   // Display einschalten
   };
   WriteSPI(CmdInit, sizeof(CmdInit));
   Clear(0, 0, 95, 63);

@@ -51,7 +51,7 @@ class MCP23017
     // Initialisiert den Chip
     void Begin();
 
-    // Muss in jedem Frame aufgerufen werden (Cache update)
+    // Muss in jedem Frame aufgerufen werden, wenn Eingänge abgefragt werden sollen (Cache update)
     void Update();
 
     // Ließt den Wert eines Eingangs aus dem Cache

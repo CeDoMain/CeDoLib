@@ -71,7 +71,7 @@ class SSD1331
     // Methoden
   public:
     // Initialisiert den SSD1331 Chip
-    void Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC);
+    void Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC, bool flipHorizontal = false);
 
     // Zeichnet ein Testbild mit den vorgegebenen Farben
     void DrawTestPreset();
@@ -95,7 +95,7 @@ class SSD1331
     void Copy(byte x1, byte y1, byte x2, byte y2, byte xNew, byte yNew);
 
     // Löscht einen Bereich
-    void Clear(byte x1, byte y1, byte x2, byte y2);
+    void Clear(byte x1 = 0, byte y1 = 0, byte x2 = 95, byte y2 = 63);
 
     // Wandelt HSV Farbmischung in RGB um
     Color HSVToRGB(float h, float s, float v);
