@@ -13,8 +13,12 @@ void Fader::Update()
     return;
 
   // Erzeugt einen sinoiden Verlauf von 1 nach 0
-  float f = 0.5 + 0.5 * cos((millis() - FadeStartTime) / 1000.0 * 3.14 / FadeTime);
-  if (millis() - FadeStartTime > FadeTime * 1000.0)
+  //float f = 0.5 + 0.5 * cos((millis() - FadeStartTime) / 1000.0 * 3.14 / FadeTime);
+
+  // Erzeugt einen linearen Verlauf von 1 nach 0
+  float f = 1 - (millis() - FadeStartTime) / (FadeTime * 1000.0);
+
+  if (millis() - FadeStartTime > FadeTime * 1000)
   {
     f = 0;
     IsFading = false;

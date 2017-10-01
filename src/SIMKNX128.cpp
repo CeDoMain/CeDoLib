@@ -4,7 +4,7 @@ Event<byte, char*> SIMKNX128::AnyValueRecvEvent = Event<byte, char*>();
 
 SIMKNX128::SIMKNX128()
 {
-	for (unsigned int i = 0; i < 128 + 10; i++)
+	for (unsigned int i = 0; i < 128; i++)
 		ValueRecvEvent[i] = 0;
 }
 
@@ -38,7 +38,7 @@ void SIMKNX128::Update()
 		token = strtok(NULL, "\0");
 
 		// Event auslösen
-		if (ValueRecvEvent != 0)
+		if (ValueRecvEvent[object] != 0)
 			(*ValueRecvEvent[object])(token);
 		AnyValueRecvEvent(object, token);
 	}
@@ -53,7 +53,7 @@ void SIMKNX128::Update()
 		char* value = strcmp(token, "0") == 0 ? "0 " : "1 ";
 
 		// Event auslösen
-		if (ValueRecvEvent != 0)
+		if (ValueRecvEvent[object] != 0)
 			(*ValueRecvEvent[object])(token);
 		AnyValueRecvEvent(object, value);
 	}

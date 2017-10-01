@@ -42,7 +42,7 @@ void BiColorLED::On()
   if (PulsePerSecond != 0)
   {
     unsigned short T = 1000 / PulsePerSecond;
-    f *= abs(2 * (millis() % T) / T - 1);
+    f *= abs(2.0 * (millis() % T) / T - 1);
   }
   (*LedA)((1 - Ratio) * f);
   (*LedB)(Ratio * f);
