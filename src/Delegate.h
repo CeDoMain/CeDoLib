@@ -81,11 +81,6 @@ private:
 
   // Konstruktor
 public:
-  Delegate()
-    : internal(0)
-  {
-
-  }
   template<typename T> Delegate(T* obj, R (T::*fp)(Ps ...))
     : internal(new DelegateMember<T, R, Ps ...>(obj, fp))
   {

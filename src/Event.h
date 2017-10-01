@@ -36,6 +36,8 @@ template<typename ... Ps> class Event
       }
     }
 
+    // Methoden
+  public:
     // Verknüpft das Event mit einer Memberfunktion
     template<typename T> void Connect(T* obj, void (T::*fp)(Ps ...))
     {

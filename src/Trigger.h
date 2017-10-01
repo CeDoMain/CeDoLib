@@ -10,8 +10,8 @@ class Trigger
 {
     // Felder
 public:
-    Delegate<> Activated;             // Wird aufgerufen, wenn der Trigger aktiviert wird
-    Delegate<> Deactivated;           // Wird aufgerufen, wenn der Trigger deaktiviert wird
+    Delegate<>* ActivatedEvent;            // Wird aufgerufen, wenn der Trigger aktiviert wird
+    Delegate<>* DeactivatedEvent;          // Wird aufgerufen, wenn der Trigger deaktiviert wird
     static Event<> AnyActiveEvent;    // Wird ausgelöst, wenn irgendein Trigger aktiviert wird
 
 private:

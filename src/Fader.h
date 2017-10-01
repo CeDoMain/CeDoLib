@@ -7,7 +7,7 @@ class Fader
 {
   // Felder
 public:
-  Event<float> FadeEvent;       // Wird während des Fadens sehr oft ausgelöst
+  Delegate<void, float>* FadeEvent;   // Wird während des Fadens sehr oft ausgelöst
 
 private:
   bool IsFading;                // Gibt an, ob gefadet wird

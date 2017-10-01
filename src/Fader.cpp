@@ -1,7 +1,7 @@
 #include "Fader.h"
 
 Fader::Fader()
-  : FadeEvent(), IsFading(false), From(0), To(1), Value(0),
+  : FadeEvent(0), IsFading(false), From(0), To(1), Value(0),
     FadeTime(0), FadeStartTime(0)
 {
 
@@ -20,7 +20,8 @@ void Fader::Update()
     IsFading = false;
   }
   Value = f * From + (1 - f) * To;
-  FadeEvent(Value);
+  if (FadeEvent != 0)
+    (*FadeEvent)(Value);
 }
 
 void Fader::Start(float fadeTime)
@@ -40,7 +41,8 @@ void Fader::Start(float fadeTime, float from, float to)
     if(Value != To)
     {
       Value = To;
-      FadeEvent(To);
+      if (FadeEvent != 0)
+        (*FadeEvent)(To);
     }
     return;
   }

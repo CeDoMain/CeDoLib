@@ -6,34 +6,31 @@
 
 class Timer
 {
-  // Felder
+    // Felder
+public:
+    Delegate<>* TimeIsUpEvent;
 private:
-  unsigned int intervall;
-  unsigned long startTime;
-  bool isRunning;
-  bool isEndless;
+    unsigned int Intervall;
+    unsigned long StartTime;
+    bool IsRunning;
 
-  // Funktionszeiger
+    // Konstruktor
 public:
-  Event<> TimeIsUpEvent;
+    Timer(unsigned int intervall);
 
-  // Konstruktor
+    // Methoden
 public:
-  Timer(unsigned int intervall, bool isEndless = false, bool isRunning = false);
+    // Muss in jedem Frame aufgerufen werden
+    void Update();
 
-  // Methoden
-public:
-  // Muss in jedem Frame aufgerufen werden
-  void Update();
+    // Startet den Timer neu
+    void Start();
 
-  // Startet den Timer neu
-  void Start();
+    // Stoppt den Timer
+    void Stop();
 
-  // Stoppt den Timer
-  void Stop();
-
-  // Setzt die Anfangszeit
-  void SetTime(unsigned int intervall);
+    // Setzt die Anfangszeit
+    void SetTime(unsigned int intervall);
 };
 
 #endif

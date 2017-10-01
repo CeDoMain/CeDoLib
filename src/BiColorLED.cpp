@@ -38,9 +38,12 @@ void BiColorLED::Off()
 void BiColorLED::On()
 {
   IsOn = true;
-  float f = (0.5 + 0.5
-    * cos(millis() / 1000.0 * 3.14 * PulsePerSecond))
-    * Intensity * GlobalIntensity;
+  float f = Intensity * GlobalIntensity;
+  if (PulsePerSecond != 0)
+  {
+    unsigned short T = 1000 / PulsePerSecond;
+    f *= abs(2 * (millis() % T) / T - 1);
+  }
   (*LedA)((1 - Ratio) * f);
   (*LedB)(Ratio * f);
   LastExecutedGlobalIntensity = GlobalIntensity;

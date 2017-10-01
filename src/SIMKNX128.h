@@ -11,7 +11,7 @@ class SIMKNX128
 {
     // Felder
   public:
-    Event<char*> ValueRecvEvent[128];             // Array von Events, die bei Empfang ausgelöst werden
+    Delegate<void, char*>* ValueRecvEvent[128];             // Array von Funktionszeigern, die bei Empfang ausgelöst werden
     static Event<byte, char*> AnyValueRecvEvent;
 
     // Konstruktor

@@ -1,33 +1,30 @@
 #include "Timer.h"
 
-Timer::Timer(unsigned int intervall, bool isEndless, bool isRunning)
+Timer::Timer(unsigned int intervall)
+    : TimeIsUpEvent(0), Intervall(intervall), IsRunning(false)
 {
-  this->intervall = intervall;
-  this->isEndless = isEndless;
-  this->isRunning = isRunning;
+  
 }
 void Timer::Update()
 {
-  if(isRunning && millis() - startTime >= (unsigned long)intervall)
-  {
-    TimeIsUpEvent();
-    if (isEndless)
-      Start();
-    else
-      Stop();
-  }
+    if(IsRunning && millis() - StartTime >= (unsigned long)Intervall)
+    {
+        if (TimeIsUpEvent != 0)
+            (*TimeIsUpEvent)();
+        Stop();
+    }
 }
 void Timer::Start()
 {
-  isRunning = true;
-  startTime = millis();
+    IsRunning = true;
+    StartTime = millis();
 }
 void Timer::Stop()
 {
-  isRunning = false;
+    IsRunning = false;
 }
 void Timer::SetTime(unsigned int intervall)
 {
-  this->intervall = intervall;
-  Start();
+    Intervall = intervall;
+    Start();
 }
