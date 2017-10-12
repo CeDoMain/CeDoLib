@@ -5,10 +5,12 @@
 #include "Wire.h"
 #include "BaseIO.h"
 
+typedef short decimal;
+
 class PCA9685
 {
     // Aufzählungen
-  public:
+public:
     enum LED
     {
       ALL = -1,
@@ -30,7 +32,7 @@ class PCA9685
       LED15 = 15
     };
     // Felder
-  private:
+private:
     static const byte REG_MODE1 = 0x00;         // Register 1 für die Konfiguration
     static const byte REG_MODE2 = 0x01;         // Register 2 für die Konfiguration
     static const byte REG_PRESCALE = 0xFE;      // Register für die PWM Geschwindigkeit
@@ -38,16 +40,16 @@ class PCA9685
     static const byte REG_ALL_LED_ON = 0xFA;    // Register für die ON-Zeit von allen LEDs
     static const byte BASE_ADDRESS = 0x40;      // Basisadresse des Chips
 
-    const byte I2CAddress;            // 7bit Adresse des Chips im I2C-Bus
+    const byte I2CAddress;                      // 7bit Adresse des Chips im I2C-Bus
 
     // Konstruktor
-  public:
+public:
     PCA9685(const byte A5A4A3A2A1A0);
 
     // Methoden
-  public:
+public:
     // PWM Frequenz von 24Hz (0) bis 1526Hz (1)
-    void Begin(const float preScale = 1);
+    void Begin(const decimal preScale = 10000);
 
     // Pins konfigurieren
     DigitalOut* GetDigitalOut(const LED led);
@@ -56,7 +58,7 @@ class PCA9685
     // LED dimmen (Wert von 0 bis 1)
     void AnalogWrite(const LED led, const float value);
 
-  private:
+private:
     // Schreibt die Daten in das angegebene Register
     void WriteByteRegister(const byte regAddress, const byte data);
 };

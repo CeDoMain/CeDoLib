@@ -1,19 +1,19 @@
 #include "SSD1331.h"
 
-#define RED(x) ((byte)(x.R * 0x1F) << 1 & 0x3E)
-#define GRN(x) ((byte)(x.G * 0x3F) & 0x3F)
-#define BLU(x) ((byte)(x.B * 0x1F) << 1 & 0x3E)
+#define RED(x) ((byte)(x.R * 0x1F / 10000) << 1 & 0x3E)
+#define GRN(x) ((byte)(x.G * 0x3F / 10000) & 0x3F)
+#define BLU(x) ((byte)(x.B * 0x1F / 10000) << 1 & 0x3E)
 
-SSD1331::Color const SSD1331::Color::Black     = { 0.0, 0.0, 0.0 };
-SSD1331::Color const SSD1331::Color::DarkGrey  = { 0.3, 0.3, 0.3 };
-SSD1331::Color const SSD1331::Color::LightGrey = { 0.6, 0.6, 0.6 };
-SSD1331::Color const SSD1331::Color::White     = { 1.0, 1.0, 1.0 };
-SSD1331::Color const SSD1331::Color::Red       = { 1.0, 0.0, 0.0 };
-SSD1331::Color const SSD1331::Color::Orange    = { 1.0, 0.5, 0.0 };
-SSD1331::Color const SSD1331::Color::Yellow    = { 1.0, 1.0, 0.0 };
-SSD1331::Color const SSD1331::Color::Green     = { 0.0, 1.0, 0.0 };
-SSD1331::Color const SSD1331::Color::Blue      = { 0.0, 0.0, 1.0 };
-SSD1331::Color const SSD1331::Color::Violett   = { 1.0, 0.0, 1.0 };
+SSD1331::Color const SSD1331::Color::Black     = { 0, 0, 0 };
+SSD1331::Color const SSD1331::Color::DarkGrey  = { 3000, 3000, 3000 };
+SSD1331::Color const SSD1331::Color::LightGrey = { 6000, 6000, 6000 };
+SSD1331::Color const SSD1331::Color::White     = { 10000, 10000, 10000 };
+SSD1331::Color const SSD1331::Color::Red       = { 10000, 0, 0 };
+SSD1331::Color const SSD1331::Color::Orange    = { 10000, 5000, 0 };
+SSD1331::Color const SSD1331::Color::Yellow    = { 10000, 10000, 10000 };
+SSD1331::Color const SSD1331::Color::Green     = { 0, 10000, 0 };
+SSD1331::Color const SSD1331::Color::Blue      = { 0, 0, 10000 };
+SSD1331::Color const SSD1331::Color::Violett   = { 10000, 0, 10000 };
 
 SSD1331::SSD1331()
   : IsFillActive(false)
@@ -239,14 +239,14 @@ template<int buffersize>
   };
   WriteSPI(CmdGDDRAMArea, sizeof(CmdGDDRAMArea));
 
-  byte foreHi = (int)(foreground.R * 0x1F) << 3 & 0xF8;
-  foreHi += (int)(foreground.G * 0x3F) >> 3 & 0x07;
-  byte foreLo = (int)(foreground.G * 0x3F) << 5 & 0xE0;
-  foreLo += (int)(foreground.B * 0x1F) & 0x1F;
-  byte backHi = (int)(background.R * 0x1F) << 3 & 0xF8;
-  backHi += (int)(background.G * 0x3F) >> 3 & 0x07;
-  byte backLo = (int)(background.G * 0x3F) << 5 & 0xE0;
-  backLo += (int)(background.B * 0x1F) & 0x1F;
+  byte foreHi = (int)(foreground.R * 0x1F / 10000) << 3 & 0xF8;
+  foreHi += (int)(foreground.G * 0x3F / 10000) >> 3 & 0x07;
+  byte foreLo = (int)(foreground.G * 0x3F / 10000) << 5 & 0xE0;
+  foreLo += (int)(foreground.B * 0x1F / 10000) & 0x1F;
+  byte backHi = (int)(background.R * 0x1F / 10000) << 3 & 0xF8;
+  backHi += (int)(background.G * 0x3F / 10000) >> 3 & 0x07;
+  byte backLo = (int)(background.G * 0x3F / 10000) << 5 & 0xE0;
+  backLo += (int)(background.B * 0x1F / 10000) & 0x1F;
 
   // Byteweise in Farben umwandeln und zeichnen
   for (int i = 0; i < bitmapBytes; i++)
@@ -306,9 +306,9 @@ void SSD1331::Clear(byte x1, byte y1, byte x2, byte y2)
 }
 SSD1331::Color SSD1331::HSVToRGB(float h, float s, float v)
 {
-  float c = v * s;
-  float x = c * (1 - abs(Mod(h / 60, 2) - 1));
-  float m = v - c;
+  decimal c = v * 10000 * s;
+  decimal x = c * (1 - abs(Mod(h / 60, 2) - 1));
+  decimal m = v * 10000 - c;
   if (0 <= h && h < 60)
     return { c + m, x + m, 0 + m };
   if (60 <= h && h < 120)

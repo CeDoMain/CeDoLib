@@ -1,15 +1,15 @@
 #include "BiColorLED.h"
 
-const float BiColorLED::RG_Red = 1;
-const float BiColorLED::RG_Orange = 0.75;
-const float BiColorLED::RG_Yellow = 0.5;
-const float BiColorLED::RG_LightGreen = 0.25;
-const float BiColorLED::RG_Green = 0;
-float BiColorLED::GlobalIntensity = 1;
+const decimal BiColorLED::RG_Red = 10000;
+const decimal BiColorLED::RG_Orange = 7500;
+const decimal BiColorLED::RG_Yellow = 5000;
+const decimal BiColorLED::RG_LightGreen = 2500;
+const decimal BiColorLED::RG_Green = 0;
+decimal BiColorLED::GlobalIntensity = 10000;
 
 BiColorLED::BiColorLED()
   : LedA(0), LedB(0),
-    Intensity(1), Ratio(0.5), IsOn(false), PulsePerSecond(0),
+    Intensity(10000), Ratio(RG_Yellow), IsOn(false), PulsePerSecond(0),
     LastExecutedGlobalIntensity(GlobalIntensity)
 {
 
@@ -38,25 +38,25 @@ void BiColorLED::Off()
 void BiColorLED::On()
 {
   IsOn = true;
-  float f = Intensity * GlobalIntensity;
+  decimal f = (long)Intensity * GlobalIntensity / 10000;
   if (PulsePerSecond != 0)
   {
-    unsigned short T = 1000 / PulsePerSecond;
-    f *= abs(2.0 * (millis() % T) / T - 1);
+    unsigned long T = 10000000 / PulsePerSecond;
+    f = f * abs(20000 * (millis() % T) / T - 10000) / 10000;
   }
-  (*LedA)((1 - Ratio) * f);
-  (*LedB)(Ratio * f);
+  (*LedA)((1 - Ratio) * f / 10000.0);
+  (*LedB)(Ratio * f / 10000.0);
   LastExecutedGlobalIntensity = GlobalIntensity;
 }
 
-void BiColorLED::SetIntensity(const float intensity)
+void BiColorLED::SetIntensity(decimal intensity)
 {
   Intensity = constrain(intensity, 0, 1);
   if(IsOn)
     On();
 }
 
-void BiColorLED::SetPulsePerSecond(const float pulsePerSecond)
+void BiColorLED::SetPulsePerSecond(decimal pulsePerSecond)
 {
   if(pulsePerSecond < 0)
   {
@@ -68,14 +68,14 @@ void BiColorLED::SetPulsePerSecond(const float pulsePerSecond)
     On();
 }
 
-void BiColorLED::SetRatio(const float ratio)
+void BiColorLED::SetRatio(decimal ratio)
 {
   Ratio = constrain(ratio, 0, 1);
   if(IsOn)
     On();
 }
 
-void BiColorLED::SetGlobalIntensity(const float globalIntensity)
+void BiColorLED::SetGlobalIntensity(decimal globalIntensity)
 {
   GlobalIntensity = globalIntensity;
 }

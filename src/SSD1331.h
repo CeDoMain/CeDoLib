@@ -6,13 +6,15 @@
 #include "SD.h"
 #include "BaseIO.h"
 
+typedef short decimal;
+
 class SSD1331
 {
     // Datentypen
   public:
     struct Color
     {
-      float R, G, B;
+      decimal R, G, B;
       static const Color Black;
       static const Color DarkGrey;
       static const Color LightGrey;

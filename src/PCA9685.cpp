@@ -6,18 +6,13 @@ PCA9685::PCA9685(const byte A5A4A3A2A1A0)
 
 }
 
-void PCA9685::Begin(const float preScale)
+void PCA9685::Begin(const decimal preScale)
 {
 	// I2C Bus starten
 	Wire.begin();
 
-	// Chip zurücksetzen
-	//Wire.beginTransmission(0x03);
-	//Wire.write(0x06);
-	//Wire.endTransmission();
-
 	// PreScale setzen
-	byte ps = map(constrain(preScale, 0, 1) * 100000, 0, 100000, 0xFF, 0x03);
+	byte ps = map(constrain(preScale, 0, 10000), 0, 10000, 0xFF, 0x03);
 	WriteByteRegister(REG_PRESCALE, ps);
 
 	// Aufwecken und Auto-Increment der Registeradresse aktivieren
@@ -47,7 +42,7 @@ void PCA9685::AnalogWrite(const LED led, const float value)
 	byte REG_LED_ON = (led == LED::ALL) ? REG_ALL_LED_ON : (REG_LED0_ON + led * 4);
 
 	// OFF-Time berechnen
-	short OFF_Time = (short)(value * (float)0xFFF) & 0xFFF;
+	short OFF_Time = (short)(value * 0xFFF) & 0xFFF;
 
 	// Phase zufällig festlegen um den Gesamtstrom zu verteilen
 	short Phase = (short)random(0x1000 - OFF_Time);

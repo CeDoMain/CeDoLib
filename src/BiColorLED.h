@@ -3,24 +3,27 @@
 
 #include "PCA9685.h"
 
+// Festkommatyp mit 4 Nachkommastellen und Vorzeichen
+typedef short decimal;
+
 class BiColorLED
 {
   // Felder
 private:
   AnalogOut* LedA;                    // Erste LED
   AnalogOut* LedB;                    // Zweite LED
-  float Intensity;                    // Helligkeit der LEDs
-  float Ratio;                        // Verhältnis zwischen A (0) und B (1)
+  decimal Intensity;                    // Helligkeit der LEDs
+  decimal Ratio;                        // Verhältnis zwischen A (0) und B (1)
   bool IsOn;                          // Gibt an, ob die LEDs angeschaltet sind
-  float PulsePerSecond;               // Pulse pro Sekunde der LEDs
-  float LastExecutedGlobalIntensity;  // Letzter globaler Helligkeitswert, der angewendet wurde
-  static float GlobalIntensity;       // Globaler Helligkeitswert
+  decimal PulsePerSecond;               // Pulse pro Sekunde der LEDs
+  decimal LastExecutedGlobalIntensity;  // Letzter globaler Helligkeitswert, der angewendet wurde
+  static decimal GlobalIntensity;       // Globaler Helligkeitswert
 public:
-  static const float RG_Red;
-  static const float RG_Orange;
-  static const float RG_Yellow;
-  static const float RG_LightGreen;
-  static const float RG_Green;
+  static const decimal RG_Red;
+  static const decimal RG_Orange;
+  static const decimal RG_Yellow;
+  static const decimal RG_LightGreen;
+  static const decimal RG_Green;
 
   // Konstruktor
 public:
@@ -41,15 +44,15 @@ public:
   void On();
 
   // Ändert die Helligkeit
-  void SetIntensity(const float intensity);
+  void SetIntensity(decimal intensity);
 
   // Lässt die LEDs pulsieren
-  void SetPulsePerSecond(const float pulsePerSecond);
+  void SetPulsePerSecond(decimal pulsePerSecond);
 
   // Ändert das Verhältnis der beiden LEDs
-  void SetRatio(const float ratio);
+  void SetRatio(decimal ratio);
 
-  static void SetGlobalIntensity(const float globalIntensity);
+  static void SetGlobalIntensity(decimal globalIntensity);
 };
 
 #endif
