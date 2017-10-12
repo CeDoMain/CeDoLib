@@ -5,22 +5,22 @@
 
 typedef short decimal;
 
-template<typename T> class Fader
+class Fader
 {
     // Felder
 public:
-    Delegate<void, T>* FadeEvent; // Wird bei jedem Fade-Schritt aufgerufen
+    Delegate<void, decimal>* FadeEvent; // Wird bei jedem Fade-Schritt aufgerufen
 
 private:
     bool IsFading;                // Gibt an, ob gefadet wird
-    T From, To, Value;            // Intervall in dem gefadet wird [From;To] und aktueller Wert
+    decimal From, To, Value;      // Intervall in dem gefadet wird [From;To] und aktueller Wert
     unsigned short FadeTime;      // Zeit in ms, die für den Fade benötigt wird
     unsigned long FadeStartTime;  // Zeit in ms, zu der der Fade gestartet wurde
 
     // Konstruktor
 public:
     Fader()
-        : FadeEvent(0), IsFading(false), From(), To(), Value(),
+        : FadeEvent(0), IsFading(false), From(0), To(0), Value(0),
         FadeTime(0), FadeStartTime(0)
     {
         
@@ -34,29 +34,32 @@ public:
         if (!IsFading)
             return;
             
-        // Erzeugt einen linearen Verlauf von 1 nach 0
-        decimal f = 10000 - ((millis() - FadeStartTime) % FadeTime) * 10;
+        // Erzeugt einen linearen Verlauf von 0 nach 1
+        decimal f = (millis() - FadeStartTime) * 10000 / FadeTime;
       
         if (millis() - FadeStartTime > FadeTime)
         {
-            f = 0;
+            f = 10000;
             IsFading = false;
         }
-        Value = f * From / 10000 + (10000 - f) * To / 10000;
+        Value = map(f, 0, 10000, From, To);
         if (FadeEvent != 0)
             (*FadeEvent)(Value);
     }
 
     // Startet den Fade vom aktuellen Wert zum neuen Ziel
-    void Start(unsigned short fadeTime, T to)
+    void Start(unsigned short fadeTime, decimal to)
     {
         Start(fadeTime, Value, to);
     }
 
     // Startet den Fade im angegebenen Intervall
-    void Start(unsigned short fadeTime, T from, T to)
+    void Start(unsigned short fadeTime, decimal from, decimal to)
     {
-        if(from == to)
+        FadeTime = fadeTime;
+        From = from;
+        To = to;
+        if(From == To)
         {
             if(Value != To)
             {
@@ -66,9 +69,6 @@ public:
             }
             return;
         }
-        FadeTime = fadeTime;
-        From = from;
-        To = to;
         FadeStartTime = millis();
         IsFading = true;
     }

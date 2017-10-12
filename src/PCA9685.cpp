@@ -42,7 +42,7 @@ void PCA9685::AnalogWrite(const LED led, const float value)
 	byte REG_LED_ON = (led == LED::ALL) ? REG_ALL_LED_ON : (REG_LED0_ON + led * 4);
 
 	// OFF-Time berechnen
-	short OFF_Time = (short)(value * 0xFFF) & 0xFFF;
+	short OFF_Time = (short)(value * (float)0xFFF) & 0xFFF;
 
 	// Phase zufällig festlegen um den Gesamtstrom zu verteilen
 	short Phase = (short)random(0x1000 - OFF_Time);

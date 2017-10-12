@@ -10,12 +10,12 @@ class BiColorLED
 {
   // Felder
 private:
-  AnalogOut* LedA;                    // Erste LED
-  AnalogOut* LedB;                    // Zweite LED
+  AnalogOut* LedA;                      // Erste LED
+  AnalogOut* LedB;                      // Zweite LED
   decimal Intensity;                    // Helligkeit der LEDs
   decimal Ratio;                        // Verhältnis zwischen A (0) und B (1)
-  bool IsOn;                          // Gibt an, ob die LEDs angeschaltet sind
-  decimal PulsePerSecond;               // Pulse pro Sekunde der LEDs
+  bool IsOn;                            // Gibt an, ob die LEDs angeschaltet sind
+  unsigned short PulsePeriodTime;       // Periodendauer eines Pulses in ms
   decimal LastExecutedGlobalIntensity;  // Letzter globaler Helligkeitswert, der angewendet wurde
   static decimal GlobalIntensity;       // Globaler Helligkeitswert
 public:
@@ -47,7 +47,7 @@ public:
   void SetIntensity(decimal intensity);
 
   // Lässt die LEDs pulsieren
-  void SetPulsePerSecond(decimal pulsePerSecond);
+  void SetPulsePerSecond(float pulsePerSecond);
 
   // Ändert das Verhältnis der beiden LEDs
   void SetRatio(decimal ratio);
