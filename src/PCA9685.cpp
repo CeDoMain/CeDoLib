@@ -11,7 +11,7 @@ void PCA9685::Begin(const decimal preScale)
 	// I2C Bus starten
 	Wire.begin();
 
-	// PreScale setzen
+	// PreScale für PWM setzen
 	byte ps = map(constrain(preScale, 0, 10000), 0, 10000, 0xFF, 0x03);
 	WriteByteRegister(REG_PRESCALE, ps);
 
@@ -23,17 +23,19 @@ void PCA9685::Begin(const decimal preScale)
 }
 DigitalOut* PCA9685::GetDigitalOut(const LED led)
 {
-  return new DigitalOut([this, led](const bool value)
-  {
-  	AnalogWrite(led, value ? 1 : 0);
-  });
+	// Wrapper für Digitalausgang erzeugen
+	return new DigitalOut([this, led](const bool value)
+	{
+		AnalogWrite(led, value ? 1 : 0);
+	});
 }
 AnalogOut* PCA9685::GetAnalogOut(const LED led)
 {
-  return new AnalogOut([this, led](const float value)
-  {
-    AnalogWrite(led, value);
-  });
+	// Wrapper für Analogausgang erzeugen
+	return new AnalogOut([this, led](const float value)
+	{
+		AnalogWrite(led, value);
+	});
 }
 
 void PCA9685::AnalogWrite(const LED led, const float value)
@@ -59,6 +61,7 @@ void PCA9685::AnalogWrite(const LED led, const float value)
 
 void PCA9685::WriteByteRegister(const byte regAddress, const byte data)
 {
+	// Byte in Register schreiben
 	Wire.beginTransmission(I2CAddress);
 	Wire.write(regAddress);
 	Wire.write(data);

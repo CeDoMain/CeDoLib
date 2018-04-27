@@ -4,20 +4,24 @@ Event<byte, char*> SIMKNX128::AnyValueRecvEvent = Event<byte, char*>();
 
 SIMKNX128::SIMKNX128()
 {
+	// Eventliste zurücksetzen
 	for (unsigned int i = 0; i < 128; i++)
 		ValueRecvEvent[i] = 0;
 }
 
 void SIMKNX128::Begin()
 {
+	// Seriellen Port öffnen
 	SIMKNX_SERIAL.begin(9600);
 }
 
 void SIMKNX128::Update()
 {
+	// Zeile einlesen und parsen
 	char* line = SIMKNX_ReadLine();
 	if (line != NULL)
 	{
+		// Debugausgabe der Nachricht
 		Serial.println(line);
 
 		// Es wurde ein Befehl empfangen
@@ -37,22 +41,23 @@ void SIMKNX128::Update()
 		// Neuen Wert auslesen
 		token = strtok(NULL, "\0");
 
-		// Event auslösen
+		// Event auslösen, wenn er verknüpft ist
 		if (ValueRecvEvent[object] != 0)
 			(*ValueRecvEvent[object])(token);
 		AnyValueRecvEvent(object, token);
 	}
 
+	// Nachrichten über USB einlesen
 	line = USB_ReadLine();
 	if (line != NULL)
 	{
-		// Es wurde ein Befehl empfangen
+		// Es wurde ein Befehl empfangen (Format: "Objekt Wert" - Beispiel: 1 0)
 		char* token = strtok(line, " ");
 		byte object = (byte)strtol(token, NULL, 10);
 		token = strtok(NULL, " ");
 		char* value = strcmp(token, "0") == 0 ? "0 " : "1 ";
 
-		// Event auslösen
+		// Event auslösen, wenn er verknüpft ist
 		if (ValueRecvEvent[object] != 0)
 			(*ValueRecvEvent[object])(token);
 		AnyValueRecvEvent(object, value);
@@ -61,6 +66,7 @@ void SIMKNX128::Update()
 
 void SIMKNX128::SendBool(byte object, bool value)
 {
+	// Nachricht für Wahrheitswert erzeugen und abschicken
 	char message[14];
 	sprintf(message, "ovs (%i) $%X", object, value);
 	SIMKNX_SERIAL.println(message);

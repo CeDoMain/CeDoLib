@@ -5,7 +5,7 @@
 
 #include "Delegate.h"
 
-template<typename ... Ps> class Event
+template<typename ... Ps> class Event : public Delegate<void, Ps ...>
 {
   private:
     // Felder
@@ -26,7 +26,7 @@ template<typename ... Ps> class Event
     // Operatoren
   public:
     // Löst das Event aus
-    void operator()(Ps ... params)
+    void operator()(Ps ... params) override
     {
       Data* data = First;
       while (data != 0)
@@ -53,6 +53,7 @@ template<typename ... Ps> class Event
         First = new Data { Delegate<void, Ps ...>(obj, fp), 0 };
       }
     }
+    // Verknüpft das Event mit einer statischen Funktion
     void Connect(void (*fp)(Ps ...))
     {
       if (First != 0)
@@ -67,6 +68,7 @@ template<typename ... Ps> class Event
         First = new Data { Delegate<void, Ps ...>(fp), 0 };
       }
     }
+    // Verknüpft das Event mit einer Lambdafunktion
     template<typename T> void Connect(T expr)
     {
       if (First != 0)

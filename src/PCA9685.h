@@ -13,23 +13,23 @@ class PCA9685
 public:
     enum LED
     {
-      ALL = -1,
-      LED0 = 0,
-      LED1 = 1,
-      LED2 = 2,
-      LED3 = 3,
-      LED4 = 4,
-      LED5 = 5,
-      LED6 = 6,
-      LED7 = 7,
-      LED8 = 8,
-      LED9 = 9,
-      LED10 = 10,
-      LED11 = 11,
-      LED12 = 12,
-      LED13 = 13,
-      LED14 = 14,
-      LED15 = 15
+        ALL = -1,   // Alle LEDs ansteuern
+        LED0 = 0,
+        LED1 = 1,
+        LED2 = 2,
+        LED3 = 3,
+        LED4 = 4,
+        LED5 = 5,
+        LED6 = 6,
+        LED7 = 7,
+        LED8 = 8,
+        LED9 = 9,
+        LED10 = 10,
+        LED11 = 11,
+        LED12 = 12,
+        LED13 = 13,
+        LED14 = 14,
+        LED15 = 15
     };
     // Felder
 private:
@@ -48,7 +48,7 @@ public:
 
     // Methoden
 public:
-    // PWM Frequenz von 24Hz (0) bis 1526Hz (1)
+    // PWM Frequenz von 24Hz (0) bis 1526Hz (1) einstellen
     void Begin(const decimal preScale = 10000);
 
     // Pins konfigurieren

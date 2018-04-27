@@ -10,17 +10,17 @@ class Trigger
 {
     // Felder
 public:
-    Delegate<>* ActivatedEvent;            // Wird aufgerufen, wenn der Trigger aktiviert wird
-    Delegate<>* DeactivatedEvent;          // Wird aufgerufen, wenn der Trigger deaktiviert wird
-    static Event<> AnyActiveEvent;    // Wird ausgelöst, wenn irgendein Trigger aktiviert wird
+    Delegate<>* ActivatedEvent;                 // Wird aufgerufen, wenn der Trigger aktiviert wird
+    Delegate<>* DeactivatedEvent;               // Wird aufgerufen, wenn der Trigger deaktiviert wird
+    static Event<> AnyActiveEvent;              // Wird ausgelöst, wenn irgendein Trigger aktiviert wird
 
 private:
-    DigitalIn* Pin;                           // Eingang für diesen Trigger
-    const bool IsInverted;                    // Gibt an, ob die Aktivierung umgekehrt wird
-    bool LastCheckedValue;                    // Letzter Wert, der registriert wurde
-    bool LastMeasuredValue;                   // Letzter Wert, der gemessen wurde (Vergleichsmessung)
-    unsigned long LastMeasurementTimeStamp;   // Zeit, zu der der letzte Wert gemessen wurde
-    const unsigned int DwellTime;             // Zeit in ms, die ein Wert gehalten werden muss um registriert zu werden
+    DigitalIn* Pin;                             // Eingang für diesen Trigger
+    const bool IsInverted;                      // Gibt an, ob die Aktivierung umgekehrt wird
+    bool LastCheckedValue;                      // Letzter Wert, der registriert wurde
+    bool LastMeasuredValue;                     // Letzter Wert, der gemessen wurde (für Vergleichsmessung)
+    unsigned long LastMeasurementTimeStamp;     // Zeit, zu der der letzte Wert gemessen wurde
+    const unsigned int DwellTime;               // Zeit in ms, die ein Wert gehalten werden muss um registriert zu werden
 
     // Konstruktor
 public:

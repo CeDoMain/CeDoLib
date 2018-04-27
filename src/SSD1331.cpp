@@ -1,337 +1,410 @@
 #include "SSD1331.h"
 
-#define RED(x) ((byte)(x.R * 0x1F / 10000) << 1 & 0x3E)
-#define GRN(x) ((byte)(x.G * 0x3F / 10000) & 0x3F)
-#define BLU(x) ((byte)(x.B * 0x1F / 10000) << 1 & 0x3E)
+// RGB Werte in 2-Byte Farbcode umrechnen
+#define RED(x) ((byte)((long)x.R * 0x1F / 10000) << 1 & 0x3E)
+#define GRN(x) ((byte)((long)x.G * 0x3F / 10000) & 0x3F)
+#define BLU(x) ((byte)((long)x.B * 0x1F / 10000) << 1 & 0x3E)
 
+// Farben definieren
 SSD1331::Color const SSD1331::Color::Black     = { 0, 0, 0 };
 SSD1331::Color const SSD1331::Color::DarkGrey  = { 3000, 3000, 3000 };
 SSD1331::Color const SSD1331::Color::LightGrey = { 6000, 6000, 6000 };
 SSD1331::Color const SSD1331::Color::White     = { 10000, 10000, 10000 };
 SSD1331::Color const SSD1331::Color::Red       = { 10000, 0, 0 };
 SSD1331::Color const SSD1331::Color::Orange    = { 10000, 5000, 0 };
-SSD1331::Color const SSD1331::Color::Yellow    = { 10000, 10000, 10000 };
+SSD1331::Color const SSD1331::Color::Yellow    = { 10000, 10000, 0 };
 SSD1331::Color const SSD1331::Color::Green     = { 0, 10000, 0 };
 SSD1331::Color const SSD1331::Color::Blue      = { 0, 0, 10000 };
 SSD1331::Color const SSD1331::Color::Violett   = { 10000, 0, 10000 };
 
+byte const SSD1331::FontData[] PROGMEM =
+{
+    0x00, 0xE0, 0x70, 0x3A, 0x0C, 0x20, 0x3A, 0x00, 0x70, 0x00, 0xE0, 0x00, // A
+    0xFF, 0xE8, 0x42, 0x84, 0x28, 0x42, 0x84, 0x24, 0xA4, 0x31, 0x80, 0x00, // B
+    0x3F, 0x84, 0x04, 0x80, 0x28, 0x02, 0x80, 0x24, 0x04, 0x20, 0x80, 0x00, // C
+    0x80, 0x2F, 0xFE, 0x80, 0x28, 0x02, 0x80, 0x24, 0x04, 0x3F, 0x80, 0x00, // D
+    0xFF, 0xE8, 0x42, 0x84, 0x28, 0x42, 0x84, 0x28, 0x02, 0x80, 0x20, 0x00, // E
+    0xFF, 0xE8, 0x40, 0x84, 0x08, 0x40, 0x84, 0x08, 0x00, 0x80, 0x00, 0x00, // F
+    0x3F, 0x84, 0x04, 0x80, 0x28, 0x02, 0x84, 0x28, 0x44, 0x47, 0xE0, 0x00, // G
+    0xFF, 0xE0, 0x40, 0x04, 0x00, 0x40, 0x04, 0x00, 0x40, 0xFF, 0xE0, 0x00, // H
+    0x00, 0x08, 0x02, 0x80, 0x2F, 0xFE, 0x80, 0x28, 0x02, 0x00, 0x00, 0x00, // I
+    0x81, 0x88, 0x04, 0x80, 0x28, 0x02, 0x80, 0x28, 0x04, 0xFF, 0x80, 0x00, // J
+    0xFF, 0xE0, 0x40, 0x0A, 0x01, 0x10, 0x20, 0x84, 0x04, 0x80, 0x20, 0x00, // K
+    0xFF, 0xE0, 0x02, 0x00, 0x20, 0x02, 0x00, 0x20, 0x02, 0x00, 0x20, 0x00, // L
+    0xFF, 0xE2, 0x00, 0x10, 0x00, 0x80, 0x10, 0x02, 0x00, 0xFF, 0xE0, 0x00, // M
+    0xFF, 0xE6, 0x00, 0x18, 0x00, 0x40, 0x03, 0x00, 0x0C, 0xFF, 0xE0, 0x00, // N
+    0x3F, 0x84, 0x04, 0x80, 0x28, 0x02, 0x80, 0x24, 0x04, 0x3F, 0x80, 0x00, // O
+    0xFF, 0xE8, 0x40, 0x84, 0x08, 0x40, 0x84, 0x04, 0x80, 0x30, 0x00, 0x00, // P
+    0x3F, 0x84, 0x04, 0x80, 0x28, 0x12, 0x80, 0xA4, 0x04, 0x3F, 0xA0, 0x00, // Q
+    0xFF, 0xE8, 0x40, 0x86, 0x08, 0x50, 0x84, 0x84, 0x84, 0x30, 0x20, 0x00, // R
+    0x38, 0x44, 0x42, 0x84, 0x28, 0x42, 0x84, 0x28, 0x44, 0x43, 0x80, 0x00, // S
+    0x80, 0x08, 0x00, 0x80, 0x0F, 0xFE, 0x80, 0x08, 0x00, 0x80, 0x00, 0x00, // T
+    0xFF, 0x80, 0x04, 0x00, 0x20, 0x02, 0x00, 0x20, 0x04, 0xFF, 0x80, 0x00, // U
+    0xE0, 0x01, 0xC0, 0x03, 0x80, 0x06, 0x03, 0x81, 0xC0, 0xE0, 0x00, 0x00, // V
+    0xFC, 0x00, 0x3E, 0x00, 0x80, 0xF0, 0x00, 0x80, 0x3E, 0xFC, 0x00, 0x00, // W
+    0x80, 0x26, 0x0C, 0x1B, 0x00, 0x40, 0x1B, 0x06, 0x0C, 0x80, 0x20, 0x00, // X
+    0x80, 0x06, 0x00, 0x18, 0x00, 0x7E, 0x18, 0x06, 0x00, 0x80, 0x00, 0x00, // Y
+    0x80, 0x68, 0x0A, 0x83, 0x28, 0x42, 0x98, 0x2A, 0x02, 0xC0, 0x20, 0x00, // Z
+    0x00, 0x60, 0x38, 0x0D, 0x03, 0x10, 0x0D, 0x00, 0x38, 0x00, 0x60, 0x00, // a
+    0x3F, 0xE2, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x1D, 0xC0, 0x00, // b
+    0x1F, 0xC2, 0x02, 0x20, 0x22, 0x02, 0x20, 0x22, 0x02, 0x10, 0x40, 0x00, // c
+    0x20, 0x23, 0xFE, 0x20, 0x22, 0x02, 0x20, 0x22, 0x02, 0x1F, 0xC0, 0x00, // d
+    0x3F, 0xE2, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x02, 0x20, 0x20, 0x00, // e
+    0x3F, 0xE2, 0x20, 0x22, 0x02, 0x20, 0x22, 0x02, 0x00, 0x20, 0x00, 0x00, // f
+    0x1F, 0xC2, 0x02, 0x20, 0x22, 0x02, 0x22, 0x22, 0x24, 0x13, 0xE0, 0x00, // g
+    0x3F, 0xE0, 0x20, 0x02, 0x00, 0x20, 0x02, 0x00, 0x20, 0x3F, 0xE0, 0x00, // h
+    0x00, 0x02, 0x02, 0x20, 0x23, 0xFE, 0x20, 0x22, 0x02, 0x00, 0x00, 0x00, // i
+    0x20, 0x82, 0x04, 0x20, 0x22, 0x02, 0x20, 0x22, 0x04, 0x3F, 0x80, 0x00, // j
+    0x3F, 0xE0, 0x20, 0x02, 0x00, 0x50, 0x08, 0x81, 0x04, 0x20, 0x20, 0x00, // k
+    0x3F, 0xE0, 0x02, 0x00, 0x20, 0x02, 0x00, 0x20, 0x02, 0x00, 0x20, 0x00, // l
+    0x3F, 0xE1, 0x00, 0x08, 0x00, 0x40, 0x08, 0x01, 0x00, 0x3F, 0xE0, 0x00, // m
+    0x3F, 0xE0, 0x80, 0x04, 0x00, 0x20, 0x01, 0x00, 0x08, 0x3F, 0xE0, 0x00, // n
+    0x1F, 0xC2, 0x02, 0x20, 0x22, 0x02, 0x20, 0x22, 0x02, 0x1F, 0xC0, 0x00, // o
+    0x3F, 0xE2, 0x20, 0x22, 0x02, 0x20, 0x22, 0x02, 0x20, 0x1C, 0x00, 0x00, // p
+    0x1F, 0xC2, 0x02, 0x20, 0x22, 0x02, 0x20, 0xA2, 0x04, 0x1F, 0xA0, 0x00, // q
+    0x3F, 0xE2, 0x20, 0x22, 0x02, 0x30, 0x22, 0x82, 0x24, 0x1C, 0x20, 0x00, // r
+    0x1C, 0x42, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x11, 0xC0, 0x00, // s
+    0x20, 0x02, 0x00, 0x20, 0x03, 0xFE, 0x20, 0x02, 0x00, 0x20, 0x00, 0x00, // t
+    0x3F, 0x80, 0x04, 0x00, 0x20, 0x02, 0x00, 0x20, 0x04, 0x3F, 0x80, 0x00, // u
+    0x30, 0x00, 0xE0, 0x01, 0x80, 0x06, 0x01, 0x80, 0xE0, 0x30, 0x00, 0x00, // v
+    0x3E, 0x00, 0x1E, 0x00, 0x80, 0x30, 0x00, 0x80, 0x1E, 0x3E, 0x00, 0x00, // w
+    0x30, 0x60, 0x88, 0x05, 0x00, 0x20, 0x05, 0x00, 0x88, 0x30, 0x60, 0x00, // x
+    0x30, 0x00, 0x80, 0x04, 0x00, 0x3E, 0x04, 0x00, 0x80, 0x30, 0x00, 0x00, // y
+    0x20, 0x62, 0x0A, 0x21, 0x22, 0x22, 0x24, 0x22, 0x82, 0x30, 0x20, 0x00, // z  
+    0x3F, 0x84, 0x04, 0x81, 0xA8, 0xE2, 0xB0, 0x24, 0x04, 0x3F, 0x80, 0x00, // 0
+    0x10, 0x22, 0x02, 0x40, 0x2F, 0xFE, 0x00, 0x20, 0x02, 0x00, 0x20, 0x00, // 1
+    0x20, 0x24, 0x06, 0x80, 0xA8, 0x12, 0x82, 0x24, 0x42, 0x38, 0x20, 0x00, // 2
+    0x40, 0x48, 0x02, 0x84, 0x28, 0x42, 0x84, 0x24, 0xA4, 0x31, 0x80, 0x00, // 3
+    0x03, 0x00, 0xD0, 0x31, 0x04, 0x10, 0xFF, 0xE0, 0x10, 0x01, 0x00, 0x00, // 4
+    0x1C, 0x4E, 0x82, 0x88, 0x28, 0x82, 0x88, 0x28, 0x44, 0x83, 0x80, 0x00, // 5
+    0x3F, 0x84, 0x44, 0x88, 0x28, 0x82, 0x88, 0x28, 0x44, 0x43, 0x80, 0x00, // 6
+    0x80, 0x08, 0x00, 0x81, 0xE8, 0xE0, 0xB0, 0x0C, 0x00, 0x80, 0x00, 0x00, // 7
+    0x31, 0x84, 0xA4, 0x84, 0x28, 0x42, 0x84, 0x24, 0xA4, 0x31, 0x80, 0x00, // 8
+    0x38, 0x44, 0x42, 0x82, 0x28, 0x22, 0x82, 0x24, 0x44, 0x3F, 0x80, 0x00, // 9
+    0x00, 0x00, 0x00, 0xFE, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // !
+    0x00, 0x00, 0x02, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ,
+    0x00, 0x00, 0x40, 0x04, 0x00, 0x40, 0x04, 0x00, 0x40, 0x04, 0x00, 0x00, // -
+    0x00, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // .
+    0x00, 0x00, 0x00, 0x0C, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // :
+    0x00, 0x00, 0x02, 0x0C, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // ;
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // 
+};
+
 SSD1331::SSD1331()
-  : IsFillActive(false)
+    : IsFillActive(false), IsInCommandMode(true), IsDrawing(false)
 {
 
 }
-void SSD1331::Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC, bool flipHorizontal)
+
+void SSD1331::Begin(DigitalOut* pin_RST, DigitalOut* pin_CS, DigitalOut* pin_DC, bool flipHorizontal, bool flipVertical)
 {
-  Pin_RST = pin_RST;
-  Pin_CS = pin_CS;
-  Pin_DC = pin_DC;
-  SPI.begin();
+    Pin_RST = pin_RST;
+    Pin_CS = pin_CS;
+    Pin_DC = pin_DC;
 
-  // ChipSelect aktivieren
-  (*Pin_CS)(false);
+    SPI.begin();
 
-  // Chip resetten
-  (*Pin_RST)(true);
-  delay(10);
-  (*Pin_RST)(false);
-  delay(10);
-  (*Pin_RST)(true);
-  delay(10);
+    // Chip zurücksetzen
+    (*Pin_RST)(false);
+    delay(10);
+    (*Pin_RST)(true);
+    delay(10);
 
-  // Chip initialisieren
-  byte CmdInit[] =
-  {
-    Cmd_DisplayOff,                 // Display ausschalten
-    Cmd_Remap, flipHorizontal ? 0x62 : 0x72,        // Nötig für das verwendete Display
-    Cmd_MasterConf, 0x8E,           // Nötig für das verwendete Display
-    Cmd_Precharge, 0xFF,            // Nötig für das verwendete Display (auf 0xFF geändert)
-    Cmd_ClockDiv, 0xF0,             // größte Bildwiederholrate
-    Cmd_SecPrechargeA, 0x64,        // Nötig für das verwendete Display
-    Cmd_SecPrechargeB, 0x78,        // Nötig für das verwendete Display
-    Cmd_SecPrechargeC, 0x64,        // Nötig für das verwendete Display
-    Cmd_PrechargeLevel, 0x3E,       // Nötig für das verwendete Display
-    Cmd_MasterCurrent, 0x06,        // Nötig für das verwendete Display
-    Cmd_ContrastA, 0x91,            // Nötig für das verwendete Display
-    Cmd_ContrastB, 0x50,            // Nötig für das verwendete Display
-    Cmd_ContrastC, 0x7D,            // Nötig für das verwendete Display
-    Cmd_DisplayOn                   // Display einschalten
-  };
-  WriteSPI(CmdInit, sizeof(CmdInit));
-  Clear(0, 0, 95, 63);
+    // Chipselect aktivieren
+    StartDrawing();
+
+    // Chip initialisieren
+    byte CmdInit[] =
+    {
+        Cmd_DisplayOff,                         // Display ausschalten
+        Cmd_Remap, 0x61
+            | (flipHorizontal ? 0x00 : 0x02)
+            | (flipVertical ? 0x00 : 0x10),     // Gibt an wie der Grafikram abgebildet wird
+        Cmd_MasterConf, 0x8E,                   // Nötig für das verwendete Display
+        Cmd_Precharge, 0xFF,                    // Nötig für das verwendete Display (auf 0xFF geändert)
+        Cmd_ClockDiv, 0xF0,                     // höchste Bildwiederholrate
+        Cmd_SecPrechargeA, 0x64,                // Nötig für das verwendete Display
+        Cmd_SecPrechargeB, 0x78,                // Nötig für das verwendete Display
+        Cmd_SecPrechargeC, 0x64,                // Nötig für das verwendete Display
+        Cmd_PrechargeLevel, 0x3E,               // Nötig für das verwendete Display
+        Cmd_MasterCurrent, 0x06,                // Nötig für das verwendete Display
+        Cmd_ContrastA, 0x91,                    // Nötig für das verwendete Display
+        Cmd_ContrastB, 0x50,                    // Nötig für das verwendete Display
+        Cmd_ContrastC, 0x7D,                    // Nötig für das verwendete Display
+        Cmd_DisplayOn                           // Display einschalten
+    };
+    WriteCommand(CmdInit, sizeof(CmdInit));
+
+    // Chipselect deaktivieren
+    EndDrawing();
 }
+
+void SSD1331::StartDrawing()
+{
+    // Wenn der Chip schon aktiviert ist, nichts machen
+    if (IsDrawing)
+        return;
+
+    // Chipselect aktivieren (LOW active) und SPI-Bus starten
+    (*Pin_CS)(false);
+    SPI.beginTransaction(SPISettings(6000000, MSBFIRST, SPI_MODE0));
+    IsDrawing = true;
+}
+
+void SSD1331::EndDrawing()
+{
+    // Wenn der Chip schon deaktiviert ist, nicht machen
+    if (!IsDrawing)
+        return;
+
+    // SPI-Bus stoppen
+    SPI.endTransaction();
+    (*Pin_CS)(true);
+    IsDrawing = false;
+}
+
 void SSD1331::DrawTestPreset()
 {
-  Clear(0, 0, 95, 63);
-  DrawRect(0,  0,  15, 31, Color::Black, true, Color::Black);
-  DrawRect(16, 0,  31, 31, Color::Black, true, Color::DarkGrey);
-  DrawRect(32, 0,  47, 31, Color::Black, true, Color::LightGrey);
-  DrawRect(48, 0,  63, 31, Color::Black, true, Color::White);
+    // Farbflächen zeichnen
+    Clear(0, 0, 95, 63);
 
-  DrawRect(0,  32, 15, 63, Color::Black, true, Color::Red);
-  DrawRect(16, 32, 31, 63, Color::Black, true, Color::Orange);
-  DrawRect(32, 32, 47, 63, Color::Black, true, Color::Yellow);
-  DrawRect(48, 32, 63, 63, Color::Black, true, Color::Green);
-  DrawRect(64, 32, 79, 63, Color::Black, true, Color::Blue);
-  DrawRect(80, 32, 95, 63, Color::Black, true, Color::Violett);
-}
-void SSD1331::DrawTestGradient(float phaseColor, float phaseBlack)
-{
-  for (int i = 0; i < 96; i++)
-  {
-    DrawLine(i, 0, i, 31, HSVToRGB(Mod(i / 95.0 + phaseColor, 1) * 360, 1, 1));
-    DrawLine(i, 32, i, 63, HSVToRGB(0, 0, Mod(i + phaseBlack, 1) / 95.0));
-  }
-}
-void SSD1331::WriteRawData(byte x1, byte y1, byte x2, byte y2, short* data, int count)
-{
-  byte CmdAddr[] =
-  {
-    Cmd_SetColumnAddr,
-    x1 & 0x7F,
-    x2 & 0x7F,
-    Cmd_SetRowAddr,
-    y1 & 0x3F,
-    y2 & 0x3F
-  };
+    DrawRectFilled(0,  0,  15, 31, Color::Black, Color::Black);
+    DrawRectFilled(16, 0,  31, 31, Color::Black, Color::DarkGrey);
+    DrawRectFilled(32, 0,  47, 31, Color::Black, Color::LightGrey);
+    DrawRectFilled(48, 0,  63, 31, Color::Black, Color::White);
 
-  WriteSPI(CmdAddr, sizeof(CmdAddr));
-  WriteSPI(reinterpret_cast<byte*>(data), count * 2, true);
+    DrawRectFilled(0,  32, 15, 63, Color::Black, Color::Red);
+    DrawRectFilled(16, 32, 31, 63, Color::Black, Color::Orange);
+    DrawRectFilled(32, 32, 47, 63, Color::Black, Color::Yellow);
+    DrawRectFilled(48, 32, 63, 63, Color::Black, Color::Green);
+    DrawRectFilled(64, 32, 79, 63, Color::Black, Color::Blue);
+    DrawRectFilled(80, 32, 95, 63, Color::Black, Color::Violett);
 }
+
+void SSD1331::DrawTestGradient()
+{
+    // Helligkeits- und Farbübergang zeichnen
+    for (int i = 0; i < 96; i++)
+    {
+        DrawLine(i, 0, i, 31, HSVToRGB(i / 95.0 * 360, 1, 1));
+        DrawLine(i, 32, i, 60, HSVToRGB(0, 0, i / 95.0));
+    }
+}
+
 void SSD1331::DrawLine(byte x1, byte y1, byte x2, byte y2, Color c)
 {
-  byte CmdLine[] =
-  {
-    Cmd_DrawLine,
-    x1 & 0x7F,
-    y1 & 0x3F,
-    x2 & 0x7F,
-    y2 & 0x3F,
-    RED(c),
-    GRN(c),
-    BLU(c)
-  };
-
-  WriteSPI(CmdLine, sizeof(CmdLine));
-}
-void SSD1331::DrawRect(byte x1, byte y1, byte x2, byte y2, Color line, bool isFilled, Color fill)
-{
-  // Bei Bedarf Füllung aktivieren
-  if(isFilled != IsFillActive)
-  {
-    byte CmdFill[] =
+    // Linienbefehl erzeugen und abschicken
+    byte CmdLine[] =
     {
-      Cmd_Fill,
-      isFilled ? 0x01 : 0x00
+        Cmd_DrawLine,
+        x1,
+        y1,
+        x2,
+        y2,
+        RED(c),
+        GRN(c),
+        BLU(c)
     };
-    WriteSPI(CmdFill, sizeof(CmdFill));
-    IsFillActive = isFilled;
-  }
 
-  byte CmdRect[] =
-  {
-    Cmd_DrawRect,
-    x1 & 0x7F,
-    y1 & 0x3F,
-    x2 & 0x7F,
-    y2 & 0x3F,
-    RED(line),
-    GRN(line),
-    BLU(line),
-    RED(fill),
-    GRN(fill),
-    BLU(fill)
-  };
-  WriteSPI(CmdRect, sizeof(CmdRect));
+    WriteCommand(CmdLine, sizeof(CmdLine));
 }
-void SSD1331::DrawString(byte x, byte y, const char* text, FontSize size, Color foreground, bool isBold, FontFamily family, Color background)
-{
-  char filename[14];
-  sprintf(filename, "%i/%s%s",
-    size == FontSize::pt9 ? 9 :
-    size == FontSize::pt12 ? 12 :
-    size == FontSize::pt18 ? 18 :
-    size == FontSize::pt24 ? 24 :
-    0,
-    family == FontFamily::Mono ? "Mono" :
-    family == FontFamily::Sans ? "Sans" :
-    family == FontFamily::Serif ? "Serif" :
-    "",
-    isBold ? "B.hex" : ".hex");
-  pinMode(4, OUTPUT);
-  SD.begin(4);
-  File f = SD.open(filename, FILE_READ);
-  byte newlineX = x;
 
-  // Text zeichenweise zeichnen
-  for (int i = 0; text[i] != '\0'; i++)
-  {
-    switch (size)
+void SSD1331::DrawRect(byte x1, byte y1, byte x2, byte y2, Color line)
+{
+    // Bei Bedarf Füllung deaktivieren
+    if(IsFillActive)
     {
-      case FontSize::pt9:
-      case FontSize::pt12:
-        DrawChar<64>(x, y, newlineX, text[i], &f, foreground, background);
-        break;
-      case FontSize::pt18:
-        DrawChar<128>(x, y, newlineX, text[i], &f, foreground, background);
-        break;
-      case FontSize::pt24:
-        DrawChar<256>(x, y, newlineX, text[i], &f, foreground, background);
-        break;
+        byte CmdFill[] =
+        {
+          Cmd_Fill,
+          0x00
+        };
+        WriteCommand(CmdFill, sizeof(CmdFill));
+        IsFillActive = false;
     }
-  }
-  f.close();
-}
-template<int buffersize>
-  void SSD1331::DrawChar(byte& x, byte& y, byte newlineX, const char c, File* f, Color foreground, Color background)
-{
-  // Schriftinformationen auslesen
-  f->seek(0);
-  byte asciiStart = f->read();
-  byte asciiEnd = f->read();
-  byte newlineHeight = f->read();
 
-  // Buchtstaben prüfen
-  if (c == '\n')
-  {
-    y += newlineHeight;
-    x = newlineX;
-    return;
-  }
-  if (c < asciiStart || c > asciiEnd)
-    return;
-
-  // Buchstabeninformationen auslesen
-  f->seek(3 + 7 * (c - asciiStart));
-  short AddrLo = f->read();
-  short AddrHi = f->read();
-  short bitmapAddress = 3
-    + 7 * (asciiEnd - asciiStart + 1)
-    + AddrLo + (AddrHi << 8);
-  byte bitmapWidth = f->read();
-  byte bitmapHeight = f->read();
-  byte stepX = f->read();
-  byte OffsetX = f->read();
-  byte OffsetY = f->read();
-
-  // Wenn der Buchstabe nach rechts hinausragt neue Zeile beginnen
-  if (x + bitmapWidth + OffsetX > 96)
-  {
-    y += newlineHeight;
-    x = newlineX;
-  }
-
-  // Bitmap laden
-  byte bitmap[buffersize];
-  float bitmapBits = bitmapWidth * bitmapHeight;
-  short bitmapBytes = (short)(bitmapBits / 8 + 0.999);
-  f->seek(bitmapAddress);
-  f->read(bitmap, bitmapBytes);
-
-  // Schreibbereich im GDDRAM setzen
-  byte CmdGDDRAMArea[] =
-  {
-    Cmd_SetColumnAddr,
-    (x + OffsetX) & 0x7F,
-    (x + OffsetX + bitmapWidth - 1) & 0x7F,
-    Cmd_SetRowAddr,
-    (y + OffsetY) & 0x7F,
-    (y + OffsetY + bitmapHeight) & 0x7F
-  };
-  WriteSPI(CmdGDDRAMArea, sizeof(CmdGDDRAMArea));
-
-  byte foreHi = (int)(foreground.R * 0x1F / 10000) << 3 & 0xF8;
-  foreHi += (int)(foreground.G * 0x3F / 10000) >> 3 & 0x07;
-  byte foreLo = (int)(foreground.G * 0x3F / 10000) << 5 & 0xE0;
-  foreLo += (int)(foreground.B * 0x1F / 10000) & 0x1F;
-  byte backHi = (int)(background.R * 0x1F / 10000) << 3 & 0xF8;
-  backHi += (int)(background.G * 0x3F / 10000) >> 3 & 0x07;
-  byte backLo = (int)(background.G * 0x3F / 10000) << 5 & 0xE0;
-  backLo += (int)(background.B * 0x1F / 10000) & 0x1F;
-
-  // Byteweise in Farben umwandeln und zeichnen
-  for (int i = 0; i < bitmapBytes; i++)
-  {
-    byte data = bitmap[i];
-    byte colormap[16] =
+    // Rechteckbefehl erzeugen und abschicken
+    byte CmdRect[] =
     {
-      (data & B10000000) == B10000000 ? foreHi : backHi,
-      (data & B10000000) == B10000000 ? foreLo : backLo,
-      (data & B01000000) == B01000000 ? foreHi : backHi,
-      (data & B01000000) == B01000000 ? foreLo : backLo,
-      (data & B00100000) == B00100000 ? foreHi : backHi,
-      (data & B00100000) == B00100000 ? foreLo : backLo,
-      (data & B00010000) == B00010000 ? foreHi : backHi,
-      (data & B00010000) == B00010000 ? foreLo : backLo,
-      (data & B00001000) == B00001000 ? foreHi : backHi,
-      (data & B00001000) == B00001000 ? foreLo : backLo,
-      (data & B00000100) == B00000100 ? foreHi : backHi,
-      (data & B00000100) == B00000100 ? foreLo : backLo,
-      (data & B00000010) == B00000010 ? foreHi : backHi,
-      (data & B00000010) == B00000010 ? foreLo : backLo,
-      (data & B00000001) == B00000001 ? foreHi : backHi,
-      (data & B00000001) == B00000001 ? foreLo : backLo
+        Cmd_DrawRect,
+        x1 & 0x7F,
+        y1 & 0x3F,
+        x2 & 0x7F,
+        y2 & 0x3F,
+        RED(line),
+        GRN(line),
+        BLU(line),
+        0,
+        0,
+        0
     };
-    WriteSPI(colormap, sizeof(colormap), true);
-  }
-  x += stepX;
+    WriteCommand(CmdRect, sizeof(CmdRect));
+}
+
+void SSD1331::DrawRectFilled(byte x1, byte y1, byte x2, byte y2, Color line, Color fill)
+{
+    // Bei Bedarf Füllung aktivieren
+    if(!IsFillActive)
+    {
+        byte CmdFill[] =
+        {
+          Cmd_Fill,
+          0x01
+        };
+        WriteCommand(CmdFill, sizeof(CmdFill));
+        IsFillActive = true;
+    }
+
+    // Rechteckbefehl erzeugen und abschicken
+    byte CmdRect[] =
+    {
+        Cmd_DrawRect,
+        x1 & 0x7F,
+        y1 & 0x3F,
+        x2 & 0x7F,
+        y2 & 0x3F,
+        RED(line),
+        GRN(line),
+        BLU(line),
+        RED(fill),
+        GRN(fill),
+        BLU(fill)
+    };
+    WriteCommand(CmdRect, sizeof(CmdRect));
+}
+
+void SSD1331::DrawString(byte x, byte y, const char* text, Color foreground, Color background)
+{
+    // Schreibbereich im GDDRAM einstellen
+    byte CmdGDDRAMArea[] =
+    {
+        Cmd_SetColumnAddr,
+        x & 0x7F,
+        0x7F,
+        Cmd_SetRowAddr,
+        y & 0x7F,
+        (y + 11) & 0x7F
+    };
+    WriteCommand(CmdGDDRAMArea, sizeof(CmdGDDRAMArea));
+
+    // RGB Farben in 2Byte-Farbe umwandeln
+    byte foreHi = (int)(foreground.R * 0x1F / 10000) << 3 & 0xF8;
+    foreHi += (int)(foreground.G * 0x3F / 10000) >> 3 & 0x07;
+    byte foreLo = (int)(foreground.G * 0x3F / 10000) << 5 & 0xE0;
+    foreLo += (int)(foreground.B * 0x1F / 10000) & 0x1F;
+    byte backHi = (int)(background.R * 0x1F / 10000) << 3 & 0xF8;
+    backHi += (int)(background.G * 0x3F / 10000) >> 3 & 0x07;
+    byte backLo = (int)(background.G * 0x3F / 10000) << 5 & 0xE0;
+    backLo += (int)(background.B * 0x1F / 10000) & 0x1F;
+    
+    // Text zeichenweise zeichnen
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        // Buchstaben byteweise laden
+        for (int j = 0; j < 12; j++)
+        {
+            byte data = pgm_read_byte(FontData + CharToFontPos(text[i]) * 12 + j);
+            
+            // Bitweise in Farben umwandeln und zeichnen
+            byte colormap[16] =
+            {
+                (data & B10000000) == B10000000 ? foreHi : backHi,
+                (data & B10000000) == B10000000 ? foreLo : backLo,
+                (data & B01000000) == B01000000 ? foreHi : backHi,
+                (data & B01000000) == B01000000 ? foreLo : backLo,
+                (data & B00100000) == B00100000 ? foreHi : backHi,
+                (data & B00100000) == B00100000 ? foreLo : backLo,
+                (data & B00010000) == B00010000 ? foreHi : backHi,
+                (data & B00010000) == B00010000 ? foreLo : backLo,
+                (data & B00001000) == B00001000 ? foreHi : backHi,
+                (data & B00001000) == B00001000 ? foreLo : backLo,
+                (data & B00000100) == B00000100 ? foreHi : backHi,
+                (data & B00000100) == B00000100 ? foreLo : backLo,
+                (data & B00000010) == B00000010 ? foreHi : backHi,
+                (data & B00000010) == B00000010 ? foreLo : backLo,
+                (data & B00000001) == B00000001 ? foreHi : backHi,
+                (data & B00000001) == B00000001 ? foreLo : backLo
+            };
+            WriteData(colormap, sizeof(colormap));
+        }
+    }
 }
 
 void SSD1331::Copy(byte x1, byte y1, byte x2, byte y2, byte xNew, byte yNew)
 {
-  byte CmdCopy[] =
-  {
-    Cmd_Copy,
-    x1 & 0x7F,
-    y1 & 0x3F,
-    x2 & 0x7F,
-    y2 & 0x3F,
-    xNew & 0x7F,
-    yNew & 0x3F
-  };
+    // Kopierbefehl erzeugen und abschicken
+    byte CmdCopy[] =
+    {
+        Cmd_Copy,
+        x1 & 0x7F,
+        y1 & 0x3F,
+        x2 & 0x7F,
+        y2 & 0x3F,
+        xNew & 0x7F,
+        yNew & 0x3F
+    };
 
-  WriteSPI(CmdCopy, sizeof(CmdCopy));
+    WriteCommand(CmdCopy, sizeof(CmdCopy));
 }
+
 void SSD1331::Clear(byte x1, byte y1, byte x2, byte y2)
 {
-  byte CmdClear[] =
-  {
-    Cmd_Clear,
-    x1 & 0x7F,
-    y1 & 0x3F,
-    x2 & 0x7F,
-    y2 & 0x3F
-  };
+    // Löschbefehl erzeugen und abschicken
+    byte CmdClear[] =
+    {
+        Cmd_Clear,
+        x1 & 0x7F,
+        y1 & 0x3F,
+        x2 & 0x7F,
+        y2 & 0x3F
+    };
 
-  WriteSPI(CmdClear, sizeof(CmdClear));
+    WriteCommand(CmdClear, sizeof(CmdClear));
+
+    // Warten bis GDDRAM resettet wurde
+    delay(1);
 }
+
 SSD1331::Color SSD1331::HSVToRGB(float h, float s, float v)
 {
-  decimal c = v * 10000 * s;
-  decimal x = c * (1 - abs(Mod(h / 60, 2) - 1));
-  decimal m = v * 10000 - c;
-  if (0 <= h && h < 60)
-    return { c + m, x + m, 0 + m };
-  if (60 <= h && h < 120)
-    return { x + m, c + m, 0 + m };
-  if (120 <= h && h < 180)
-    return { 0 + m, c + m, x + m };
-  if (180 <= h && h < 240)
-    return { 0 + m, x + m, c + m };
-  if (240 <= h && h < 300)
-    return { x + m, 0 + m, c + m };
-  if (300 <= h && h < 360)
-    return { c + m, 0 + m, x + m };
+    // HSV Farbmischung in RGB umwandeln
+    decimal c = v * 10000 * s;
+    decimal x = c * (1 - abs(Mod(h / 60, 2) - 1));
+    decimal m = v * 10000 - c;
+    if (0 <= h && h < 60)
+        return { c + m, x + m, 0 + m };
+    if (60 <= h && h < 120)
+        return { x + m, c + m, 0 + m };
+    if (120 <= h && h < 180)
+        return { 0 + m, c + m, x + m };
+    if (180 <= h && h < 240)
+        return { 0 + m, x + m, c + m };
+    if (240 <= h && h < 300)
+        return { x + m, 0 + m, c + m };
+    if (300 <= h && h < 360)
+        return { c + m, 0 + m, x + m };
 
-  return { 0, 0, 0 };
+    return { 0, 0, 0 };
 }
-void SSD1331::WriteSPI(byte* data, int count, bool isData)
+
+void SSD1331::WriteCommand(byte* command, int count)
 {
-  SPI.beginTransaction(SPISettings(6000000, MSBFIRST, SPI_MODE0));
-  (*Pin_CS)(false);
+    // Befehlsmodus aktivieren und Daten verschicken
+    if (!IsInCommandMode)
+    {
+        (*Pin_DC)(false);
+        IsInCommandMode = true;
+    }
+    SPI.transfer(command, count);
+}
 
-  (*Pin_DC)(isData ? HIGH : LOW); // Befehl oder Grafikdaten
-  SPI.transfer(data, count);
-
-  (*Pin_CS)(true);
-  SPI.endTransaction();
+void SSD1331::WriteData(byte* data, int count)
+{
+    // Datenmodus aktivieren und Daten verschicken
+    if (IsInCommandMode)
+    {
+        (*Pin_DC)(true);
+        IsInCommandMode = false;
+    }
+    SPI.transfer(data, count);
 }

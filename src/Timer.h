@@ -10,13 +10,13 @@ class Timer
 public:
     Delegate<>* TimeIsUpEvent;
 private:
-    unsigned int Intervall;
+    unsigned long Intervall;
     unsigned long StartTime;
     bool IsRunning;
 
     // Konstruktor
 public:
-    Timer(unsigned int intervall);
+    Timer(unsigned long intervall);
 
     // Methoden
 public:
@@ -30,7 +30,7 @@ public:
     void Stop();
 
     // Setzt die Anfangszeit
-    void SetTime(unsigned int intervall);
+    void SetTime(unsigned long intervall);
 };
 
 #endif

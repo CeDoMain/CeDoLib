@@ -97,9 +97,16 @@ public:
 
   }
 
+protected:
+  Delegate()
+    : internal(0)
+  {
+
+  }
+
   // Operatoren
 public:
-  R operator()(Ps ... params)
+  virtual R operator()(Ps ... params)
   {
     return (*internal)(params ...);
   }
