@@ -3,113 +3,113 @@
 
 template<typename R = void, typename ... Ps> class DelegateBase
 {
-  // Operatoren
+    // Operatoren
 public:
-  virtual R operator()(Ps ...) = 0;
+    virtual R operator()(Ps ...) = 0;
 };
 
 template<typename T, typename R = void, typename ... Ps> class DelegateMember : public DelegateBase<R, Ps ...>
 {
-  // Felder
+    // Felder
 private:
-  T* Obj;
-  R (T::*Fp)(Ps ...);
+    T* Obj;
+    R (T::*Fp)(Ps ...);
 
-  // Konstruktor
+    // Konstruktor
 public:
-  DelegateMember(T* obj, R (T::*fp)(Ps ...))
-    : Obj(obj), Fp(fp)
-  {
+    DelegateMember(T* obj, R (T::*fp)(Ps ...))
+        : Obj(obj), Fp(fp)
+    {
 
-  }
+    }
 
-  // Methoden
+    // Methoden
 public:
-  virtual R operator()(Ps ... params)
-  {
-      return (Obj->*Fp)(params ...);
-  }
+    virtual R operator()(Ps ... params)
+    {
+        return (Obj->*Fp)(params ...);
+    }
 };
 template<typename T, typename R = void, typename ... Ps> class DelegateLambda : public DelegateBase<R, Ps ...>
 {
-  // Felder
+    // Felder
 private:
-  T Expr;
+    T Expr;
 
-  // Konstruktor
+    // Konstruktor
 public:
-  DelegateLambda(T expr)
-    : Expr(expr)
-  {
+    DelegateLambda(T expr)
+        : Expr(expr)
+    {
 
-  }
+    }
 
-  // Methoden
+    // Methoden
 public:
-  virtual R operator()(Ps ... params)
-  {
-      return Expr(params ...);
-  }
+    virtual R operator()(Ps ... params)
+    {
+        return Expr(params ...);
+    }
 };
 template<typename R = void, typename ... Ps> class DelegateStatic : public DelegateBase<R, Ps ...>
 {
-  // Felder
+    // Felder
 private:
-  R (*Fp)(Ps ...);
+    R (*Fp)(Ps ...);
 
-  // Konstruktor
+    // Konstruktor
 public:
-  DelegateStatic(R (*fp)(Ps ...))
-    : Fp(fp)
-  {
+    DelegateStatic(R (*fp)(Ps ...))
+        : Fp(fp)
+    {
 
-  }
+    }
 
-  // Methoden
+    // Methoden
 public:
-  virtual R operator()(Ps ... params)
-  {
-      return Fp(params ...);
-  }
+    virtual R operator()(Ps ... params)
+    {
+        return Fp(params ...);
+    }
 };
 
 template<typename R = void, typename ... Ps> class Delegate
 {
-  // Felder
+    // Felder
 private:
-  DelegateBase<R, Ps ...>* internal;
+    DelegateBase<R, Ps ...>* internal;
 
-  // Konstruktor
+    // Konstruktor
 public:
-  template<typename T> Delegate(T* obj, R (T::*fp)(Ps ...))
-    : internal(new DelegateMember<T, R, Ps ...>(obj, fp))
-  {
+    template<typename T> Delegate(T* obj, R (T::*fp)(Ps ...))
+        : internal(new DelegateMember<T, R, Ps ...>(obj, fp))
+    {
 
-  }
-  Delegate(R (*fp)(Ps ...))
-    : internal(new DelegateStatic<R, Ps ...>(fp))
-  {
+    }
+    Delegate(R (*fp)(Ps ...))
+        : internal(new DelegateStatic<R, Ps ...>(fp))
+    {
 
-  }
-  template<typename T> Delegate(T expr)
-    : internal(new DelegateLambda<T, R, Ps ...>(expr))
-  {
+    }
+    template<typename T> Delegate(T expr)
+        : internal(new DelegateLambda<T, R, Ps ...>(expr))
+    {
 
-  }
+    }
 
 protected:
-  Delegate()
-    : internal(0)
-  {
+    Delegate()
+        : internal(0)
+    {
 
-  }
+    }
 
-  // Operatoren
+    // Operatoren
 public:
-  virtual R operator()(Ps ... params)
-  {
-    return (*internal)(params ...);
-  }
+    virtual R operator()(Ps ... params)
+    {
+        return (*internal)(params ...);
+    }
 };
 
 #endif

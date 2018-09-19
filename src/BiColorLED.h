@@ -9,6 +9,13 @@ typedef short decimal;
 class BiColorLED
 {
     // Felder
+public:
+    static const decimal RG_Red;          // Verhältnis für Farbe Rot
+    static const decimal RG_Orange;       // Verhältnis für Farbe Orange
+    static const decimal RG_Yellow;       // Verhältnis für Farbe Gelb
+    static const decimal RG_LightGreen;   // Verhältnis für Farbe Hellgrün
+    static const decimal RG_Green;        // Verhältnis für Farbe Grün
+    
 private:
     AnalogOut* LedA;                      // Erste LED
     AnalogOut* LedB;                      // Zweite LED
@@ -18,12 +25,6 @@ private:
     unsigned short PulsePeriodTime;       // Periodendauer eines Pulses in ms
     decimal LastExecutedGlobalIntensity;  // Letzter globaler Helligkeitswert, der angewendet wurde
     static decimal GlobalIntensity;       // Globaler Helligkeitswert
-public:
-    static const decimal RG_Red;          // Verhältnis für Farbe Rot
-    static const decimal RG_Orange;       // Verhältnis für Farbe Orange
-    static const decimal RG_Yellow;       // Verhältnis für Farbe Gelb
-    static const decimal RG_LightGreen;   // Verhältnis für Farbe Hellgrün
-    static const decimal RG_Green;        // Verhältnis für Farbe Grün
 
     // Konstruktor
 public:

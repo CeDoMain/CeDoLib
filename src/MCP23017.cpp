@@ -1,11 +1,5 @@
 #include "MCP23017.h"
 
-// Verändert bzw. prüft das y-te Bit in x
-#define SET(x, y) (x |= (1 << y))
-#define UNSET(x, y) (x &= ~(1 << y))
-#define ISSET(x, y) ((x & (1 << y)) != 0)
-#define ISUNSET(x, y) ((x & (1 << y)) == 0)
-
 MCP23017::MCP23017(const byte A2A1A0)
 	: I2CAddress(BASE_ADDRESS | (A2A1A0 & 0x07)),
 	  Direction(0),			// alle Pins sind Ausgang

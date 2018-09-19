@@ -5,6 +5,12 @@
 #include "Wire.h"
 #include "BaseIO.h"
 
+// Verändert bzw. prüft das y-te Bit in x
+#define SET(x, y) (x |= (1 << y))
+#define UNSET(x, y) (x &= ~(1 << y))
+#define ISSET(x, y) ((x & (1 << y)) != 0)
+#define ISUNSET(x, y) ((x & (1 << y)) == 0)
+
 class MCP23017
 {
     // Aufzählungen

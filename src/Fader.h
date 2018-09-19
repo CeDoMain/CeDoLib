@@ -1,6 +1,7 @@
 #ifndef FADER_H
 #define FADER_H
 
+#include "Arduino.h"
 #include "Event.h"
 
 typedef short decimal;

@@ -53,7 +53,7 @@ void Button::Update()
     // Zugrundeliegenden Trigger updaten
     Trig->Update();
 
-    // Auf gedrückt halten prüfen, wenn ein langer druck noch nicht ausgelöst wurde
+    // Auf gedrückt halten prüfen, wenn ein langer Druck noch nicht ausgelöst wurde
     if (IsActive() && !LongPressFired && millis() - ActivatedTimeStamp >= (unsigned long)LongPressTime)
     {
         // Trigger wurde lange genug ausgelöst
