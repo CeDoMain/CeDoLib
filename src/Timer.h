@@ -8,11 +8,11 @@ class Timer
 {
     // Felder
 public:
-    Delegate<>* TimeIsUpEvent;
+    Delegate<>* TimeIsUpEvent;      // Wird ausgelöst, wenn die Zeit abgelaufen ist
 private:
-    unsigned long Intervall;
-    unsigned long StartTime;
-    bool IsRunning;
+    unsigned long Intervall;        // Zeit in ms, die der Timer laufen soll
+    unsigned long StartTime;        // Systemzeit, zu der der Timer gestartet wurde
+    bool IsRunning;                 // Gibt an, ob der Timer läuft
 
     // Konstruktor
 public:

@@ -8,7 +8,7 @@ Timer::Timer(unsigned long intervall)
 void Timer::Update()
 {
     // Prüfen ob der Timer läuft und abgelaufen ist
-    if(IsRunning && millis() - StartTime >= (unsigned long)Intervall)
+    if(IsRunning && millis() - StartTime >= Intervall)
     {
         // Timer ist abgelaufen
         Stop();

@@ -28,7 +28,7 @@ public:
     };
 
     // Felder
-public:
+private:
     static const byte Cmd_ContrastA       = 0x81;
     static const byte Cmd_ContrastB       = 0x82;
     static const byte Cmd_ContrastC       = 0x83;
@@ -53,7 +53,6 @@ public:
     static const byte Cmd_Fill            = 0x26;
     static const byte FontData[];
 
-private:
     DigitalOut* Pin_RST;    // Reset Pin (0 = Reset)
     DigitalOut* Pin_CS;     // ChipSelect Pin
     DigitalOut* Pin_DC;     // Data/Command Pin (1 = Data, 0 = Command)
@@ -101,7 +100,7 @@ public:
     void Clear(byte x1 = 0, byte y1 = 0, byte x2 = 95, byte y2 = 63);
 
     // Wandelt HSV Farbmischung in RGB um
-    Color HSVToRGB(float h, float s, float v);
+    static Color HSVToRGB(float h, float s, float v);
 
 private:
     // sendet Befehle über SPI

@@ -147,7 +147,7 @@ void SSD1331::StartDrawing()
 
     // Chipselect aktivieren (LOW active) und SPI-Bus starten
     (*Pin_CS)(false);
-    SPI.beginTransaction(SPISettings(6000000, MSBFIRST, SPI_MODE0));
+    SPI.beginTransaction(SPISettings(32000000, MSBFIRST, SPI_MODE0));
     IsDrawing = true;
 }
 
