@@ -1,8 +1,8 @@
-#include "ArduinoMega.h"
+#include "FeatherM0.h"
 
-#ifdef ARDUINO_AVR_MEGA2560
+#ifdef ARDUINO_SAMD_ZERO
 
-DigitalOut* ArduinoMega::GetDigitalOut(const DigitalPin pin)
+DigitalOut* FeatherM0::GetDigitalOut(const DigitalPin pin)
 {
     // Wrapper für einen Digitalausgang erzeugen
     pinMode(pin, OUTPUT);
@@ -11,7 +11,7 @@ DigitalOut* ArduinoMega::GetDigitalOut(const DigitalPin pin)
         digitalWrite(pin, value ? HIGH : LOW);
     });
 }
-DigitalIn* ArduinoMega::GetDigitalIn(const DigitalPin pin, const bool isPulledUp)
+DigitalIn* FeatherM0::GetDigitalIn(const DigitalPin pin, const bool isPulledUp)
 {
     // Wrapper für einen Digitaleingang erzeugen und Pullup konfigurieren
     pinMode(pin, isPulledUp ? INPUT_PULLUP : INPUT);
@@ -20,19 +20,21 @@ DigitalIn* ArduinoMega::GetDigitalIn(const DigitalPin pin, const bool isPulledUp
         return digitalRead(pin) == HIGH;
     });
 }
-AnalogOut* ArduinoMega::GetAnalogOut(const AnalogOutPin pin)
+AnalogOut* FeatherM0::GetAnalogOut(const AnalogOutPin pin)
 {
     // Wrapper für einen Analogausgang erzeugen
-    pinMode(pin, OUTPUT);
+    if (pin != AnalogOutPin::DAC0)
+        pinMode(pin, OUTPUT);
     return new AnalogOut([pin](const float value) 
     {
         return analogWrite(pin, (byte)(value * 255));
     });
 }
-AnalogIn* ArduinoMega::GetAnalogIn(const AnalogInPin pin, AnalogReference reference)
+AnalogIn* FeatherM0::GetAnalogIn(const AnalogInPin pin, AnalogReference reference)
 {
     // Wrapper für einen Analogeingang erzeugen und Referenzspannung konfigurieren
-    analogReference(reference);
+    if (reference == AnalogReference::External)
+        analogReference(AR_EXTERNAL);
     return new AnalogIn([pin]() -> bool
     {
         return analogRead(pin / 1023.0);

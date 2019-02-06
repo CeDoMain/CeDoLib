@@ -1,8 +1,8 @@
-#include "ArduinoMega.h"
+#include "Feather32u4.h"
 
-#ifdef ARDUINO_AVR_MEGA2560
+#ifdef ARDUINO_AVR_FEATHER32U4
 
-DigitalOut* ArduinoMega::GetDigitalOut(const DigitalPin pin)
+DigitalOut* Feather32u4::GetDigitalOut(const DigitalPin pin)
 {
     // Wrapper für einen Digitalausgang erzeugen
     pinMode(pin, OUTPUT);
@@ -11,7 +11,7 @@ DigitalOut* ArduinoMega::GetDigitalOut(const DigitalPin pin)
         digitalWrite(pin, value ? HIGH : LOW);
     });
 }
-DigitalIn* ArduinoMega::GetDigitalIn(const DigitalPin pin, const bool isPulledUp)
+DigitalIn* Feather32u4::GetDigitalIn(const DigitalPin pin, const bool isPulledUp)
 {
     // Wrapper für einen Digitaleingang erzeugen und Pullup konfigurieren
     pinMode(pin, isPulledUp ? INPUT_PULLUP : INPUT);
@@ -20,7 +20,7 @@ DigitalIn* ArduinoMega::GetDigitalIn(const DigitalPin pin, const bool isPulledUp
         return digitalRead(pin) == HIGH;
     });
 }
-AnalogOut* ArduinoMega::GetAnalogOut(const AnalogOutPin pin)
+AnalogOut* Feather32u4::GetAnalogOut(const AnalogOutPin pin)
 {
     // Wrapper für einen Analogausgang erzeugen
     pinMode(pin, OUTPUT);
@@ -29,7 +29,7 @@ AnalogOut* ArduinoMega::GetAnalogOut(const AnalogOutPin pin)
         return analogWrite(pin, (byte)(value * 255));
     });
 }
-AnalogIn* ArduinoMega::GetAnalogIn(const AnalogInPin pin, AnalogReference reference)
+AnalogIn* Feather32u4::GetAnalogIn(const AnalogInPin pin, AnalogReference reference)
 {
     // Wrapper für einen Analogeingang erzeugen und Referenzspannung konfigurieren
     analogReference(reference);

@@ -28,6 +28,7 @@ public:
         GPB1 = 1,
         GPB0 = 0
     };
+    
     // Felder
 private:
     static const byte REG_DIRECTION = 0x00;     // Register für die Richtungskonfiguration

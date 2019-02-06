@@ -36,7 +36,7 @@ void SIMKNX128::Update()
 		int object = (int)strtol(token, NULL, 16);
 
 		// RAM-Flags überspringen
-		token = strtok (NULL, "$ ");
+		token = strtok(NULL, "$ ");
 
 		// Neuen Wert auslesen
 		token = strtok(NULL, "\0");
@@ -55,12 +55,11 @@ void SIMKNX128::Update()
 		char* token = strtok(line, " ");
 		byte object = (byte)strtol(token, NULL, 10);
 		token = strtok(NULL, " ");
-		char* value = strcmp(token, "0") == 0 ? "0 " : "1 ";
 
 		// Event auslösen, wenn er verknüpft ist
 		if (ValueRecvEvent[object] != 0)
 			(*ValueRecvEvent[object])(token);
-		AnyValueRecvEvent(object, value);
+		AnyValueRecvEvent(object, token);
 	}
 }
 
@@ -74,7 +73,7 @@ void SIMKNX128::SendBool(byte object, bool value)
 
 bool SIMKNX128::ParseBool(char* value)
 {
-	return strcmp(value, "1 ") == 0;
+	return strcmp(value, "1 ") == 0 || strcmp(value, "1") == 0;
 }
 
 char* SIMKNX128::SIMKNX_ReadLine()

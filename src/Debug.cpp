@@ -1,5 +1,7 @@
 #include "Debug.h"
 
+#ifdef ARDUINO_AVR_MEGA2560
+
 // Code von http://playground.arduino.cc/Main/Printf
 
 void Debug(char* fmt, ... )
@@ -30,3 +32,5 @@ void PrintRAMUsage()
     double mem = 100.0 - freeMemory() / 8186.0 * 100.0;
     Debug(F("%i.%i%% RAM used\n"), (int)mem, (int)((mem - (int)mem) * 100));
 }
+
+#endif

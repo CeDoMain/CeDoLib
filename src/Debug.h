@@ -1,6 +1,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#ifdef ARDUINO_AVR_MEGA2560
+
 #include "stdarg.h"
 #include "Arduino.h"
 #include "MemoryFree.h"
@@ -15,5 +17,7 @@ void Debug(const __FlashStringHelper *fmt, ... );
 
 // Schickt den Anteil des belegten RAMs im Serial Port an
 void PrintRAMUsage();
+
+#endif
 
 #endif

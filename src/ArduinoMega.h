@@ -1,6 +1,8 @@
 #ifndef ARDUINOMEGA_H
 #define ARDUINOMEGA_H
 
+#ifdef ARDUINO_AVR_MEGA2560
+
 #include "BaseIO.h"
 #include "Arduino.h"
 
@@ -52,5 +54,7 @@ public:
     // Erzeugt einen Wrapper für einen Analogeingang
     static AnalogIn* GetAnalogIn(const AnalogInPin pin, AnalogReference reference = AnalogReference::Default);
 };
+
+#endif
 
 #endif
