@@ -109,13 +109,6 @@ private:
     // sendet Daten über SPI
     void WriteData(byte* data, int count);
 
-    // Berechnet den Modulo einer Dezimalzahl
-    static float Mod(float a, float b)
-    {
-        while (a >= b) a -= b;
-        return a;
-    }
-
     // Gibt für einen Buchstaben die Position im FontData-Array an (muss noch mit 12 multipliziert werden)
     static int CharToFontPos(char c)
     {

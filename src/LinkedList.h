@@ -47,25 +47,25 @@ public:
     }
 
     // Führt eine Lambda-Funktion für jedes Element aus
-    template<typename TEx, typename ... Ps> void ForEach(TEx expr, Ps ... params)
+    template<typename TEx, typename ... Ps> void ForEach(TEx expr)
     {
         Data* data = First;
         while (data != 0)
         {
-            // Wert als erstes Element übergeben, danach die Parameter
-            expr(data->value, params ...);
+            // Wert als Parameter übergeben
+            expr(data->value);
             data = data->Next;
         }
     }
 
     // Gibt das erste Element zurück, für das die Lambda-Funktion wahr ist
-    template<typename TEx, typename ... Ps> T Find(TEx expr, Ps ... params)
+    template<typename TEx, typename ... Ps> T Find(TEx expr)
     {
         Data* data = First;
         while (data != 0)
         {
-            // Lambda-Funktion mit Wert als erstem Element ausführen und Rückgabewert prüfen
-            if (expr(data->value, params ...))
+            // Lambda-Funktion mit Wert als Parameter ausführen und Rückgabewert prüfen
+            if (expr(data->value))
                 return data->value;
             data = data->Next;
         }
@@ -73,14 +73,14 @@ public:
     }
 
     // Zählt die wahren Lambda-Funktionen
-    template<typename TEx, typename ... Ps> long Count(TEx expr, Ps ... params)
+    template<typename TEx, typename ... Ps> long Count(TEx expr)
     {
         long count = 0;
         Data* data = First;
         while (data != 0)
         {
-            // Wenn die Lambda-Funktion für den Wert wahr ist, Zähler erhöhen
-            if (expr(data->value, params ...))
+            // Wenn die Lambda-Funktion für den Parameter wahr ist, Zähler erhöhen
+            if (expr(data->value))
                 count++;
             data = data->Next;
         }

@@ -369,7 +369,7 @@ SSD1331::Color SSD1331::HSVToRGB(float h, float s, float v)
 {
     // HSV Farbmischung in RGB umwandeln
     decimal c = v * 10000 * s;
-    decimal x = c * (1 - abs(Mod(h / 60, 2) - 1));
+    decimal x = c * (1 - abs(fmod(h / 60, 2) - 1));
     decimal m = v * 10000 - c;
     if (0 <= h && h < 60)
         return { c + m, x + m, 0 + m };

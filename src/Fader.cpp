@@ -42,14 +42,15 @@ void Fader::Start(unsigned short fadeTime, decimal from, decimal to)
     To = to;
 
     // Optimierungen prüfen
-    if(From == To)
+    if(From == To || FadeTime == 0)
     {
         if(Value != To)
         {
             Value = To;
             if (FadeEvent != 0)
-                (*FadeEvent)(To);
+                (*FadeEvent)(Value);
         }
+        IsFading = false;
         return;
     }
     FadeStartTime = millis();

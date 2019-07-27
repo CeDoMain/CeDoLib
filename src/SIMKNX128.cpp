@@ -19,7 +19,7 @@ void SIMKNX128::Update()
 {
 	// Zeile einlesen und parsen
 	char* line = SIMKNX_ReadLine();
-	if (line != NULL)
+	if (line != 0)
 	{
 		// Debugausgabe der Nachricht
 		Serial.println(line);
@@ -32,14 +32,14 @@ void SIMKNX128::Update()
 			return;
 
 		// Kommunikationsobjekt-Index auslesen
-		token = strtok(NULL, "$ ");
-		int object = (int)strtol(token, NULL, 16);
+		token = strtok(0, "$ ");
+		int object = (int)strtol(token, 0, 16);
 
 		// RAM-Flags überspringen
-		token = strtok(NULL, "$ ");
+		token = strtok(0, "$ ");
 
 		// Neuen Wert auslesen
-		token = strtok(NULL, "\0");
+		token = strtok(0, "\0");
 
 		// Event auslösen, wenn er verknüpft ist
 		if (ValueRecvEvent[object] != 0)
@@ -49,12 +49,12 @@ void SIMKNX128::Update()
 
 	// Nachrichten über USB einlesen
 	line = USB_ReadLine();
-	if (line != NULL)
+	if (line != 0)
 	{
 		// Es wurde ein Befehl empfangen (Format: "Objekt Wert" - Beispiel: 1 0)
 		char* token = strtok(line, " ");
-		byte object = (byte)strtol(token, NULL, 10);
-		token = strtok(NULL, " ");
+		byte object = (byte)strtol(token, 0, 10);
+		token = strtok(0, " ");
 
 		// Event auslösen, wenn er verknüpft ist
 		if (ValueRecvEvent[object] != 0)
@@ -113,7 +113,7 @@ char* SIMKNX128::SIMKNX_ReadLine()
 			i++;
 		}
 	}
-	return NULL;
+	return 0;
 }
 char* SIMKNX128::USB_ReadLine()
 {
@@ -122,7 +122,7 @@ char* SIMKNX128::USB_ReadLine()
 
 	// Wenn es keine Nachrichten gibt kann abgebrochen werden
 	if (Serial.available() == 0)
-		return NULL;
+		return 0;
 
 	// Der Index ist 0, wenn im letzten Durchgang eine Zeile komplett eingelesen wurde - der Puffer kann zurückgesetzt werden
 	if (i == 0)
@@ -150,5 +150,5 @@ char* SIMKNX128::USB_ReadLine()
 		}
 		i++;
 	}
-	return NULL;
+	return 0;
 }
