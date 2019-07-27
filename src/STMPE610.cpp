@@ -1,9 +1,8 @@
 #include "STMPE610.h"
 
-STMPE610::STMPE610()
-    : WasTouched(false),
-      Rotation(1),
-      ReleaseTimeStamp(0)
+STMPE610::STMPE610(word width, word height)
+    : Width(width), Height(height),
+      WasTouched(false), Rotation(1), ReleaseTimeStamp(0)
 {
     
 }
@@ -56,8 +55,8 @@ void STMPE610::Update()
             switch (Rotation)
             {
                 case 1:
-                    ta = constrain(map(rb, 190, 3760, 0, 480), 0, 480);
-                    tb = constrain(map(ra, 3820, 260, 0, 320), 0, 320);
+                    ta = constrain(map(rb, 190, 3760, 0, Width), 0, Width);
+                    tb = constrain(map(ra, 3820, 260, 0, Height), 0, Height);
                     break;
 
                 default:

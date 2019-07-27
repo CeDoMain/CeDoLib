@@ -29,6 +29,8 @@ private:
     static const byte REG_TSC_FRACTION_Z =      0x56;
     static const byte REG_TSC_DATA =            0xD7;
     static const byte REG_TSC_I_DRIVE =         0x58;
+
+    const word Width, Height;       // Größe des Touchscreens
     
     DigitalOut* Pin_CS;             // ChipSelect Pin
     bool WasTouched;                // Gibt an, ob der Touchscreen beim letzten Update gedrückt war
@@ -37,7 +39,7 @@ private:
 
     // Konstruktor
 public:
-    STMPE610();
+    STMPE610(word width, word height);
 
     // Methoden
 public:
