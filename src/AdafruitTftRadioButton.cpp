@@ -3,23 +3,24 @@
 LinkedList<TftRadioButton*> TftRadioButton::Buttons = LinkedList<TftRadioButton*>();
 
 TftRadioButton::TftRadioButton(word left, word top, word width, word height, byte groupId, bool canTouchDeactivate)
-    : TftElement(left, top, width, height), ActivatedEvent(0), DeactivatedEvent(0), ContentDrawer(0),
+    : TftElement(left, top, width, height), ActivationChangedEvent(0), ContentDrawer(0),
       GroupId(groupId), CanTouchDeactivate(canTouchDeactivate), IsActive(false)
 {
     Buttons.Add(this);
 }
 void TftRadioButton::Touch(word x, word y)
 {
-    SetActivation(IsActive ? !CanTouchDeactivate : true);
+    SetActivation(IsActive ? !CanTouchDeactivate : true, true, true);
 }
-void TftRadioButton::SetActivation(bool value, bool raiseEvent)
+void TftRadioButton::SetActivation(bool value, bool raiseEvent, bool wasTouched)
 {
     if (value == IsActive)
         return;
 
     IsActive = value;
     
-    Draw();
+    if (GetVisibility())
+        Draw();
 
     // Andere Auswahlknöpfe der gleichen Gruppe deaktivieren
     if (IsActive)
@@ -27,17 +28,15 @@ void TftRadioButton::SetActivation(bool value, bool raiseEvent)
         Buttons.ForEach([=](TftRadioButton* btn)
         {
             if (btn != this && btn->GroupId == GroupId)
-                btn->SetActivation(false, raiseEvent);
+                btn->SetActivation(false, raiseEvent, false);
         });
     }
 
-    if (raiseEvent)
+    if (!raiseEvent)
         return;
         
-    if (!IsActive && DeactivatedEvent != 0)
-        (*DeactivatedEvent)();
-    if (IsActive && ActivatedEvent != 0)
-        (*ActivatedEvent)();
+    if (ActivationChangedEvent != 0)
+        (*ActivationChangedEvent)(IsActive, wasTouched);
 
 }
 void TftRadioButton::DrawContent()

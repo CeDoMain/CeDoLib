@@ -40,11 +40,60 @@ public:
             Draw();
     }
     
+    // Gibt den aktuellen Wert zurück
+    T GetValue()
+    {
+        return Value;
+    }
+
+    // Zeichnet den Inhalt neu
+    void DrawContent()
+    {
+        Draw();
+    }
+    
 private:
     // Zeichnet die Anzeige
     void Draw()
     {
         if (ContentDrawer != 0) (*ContentDrawer)(Gfx, Left, Top, Width, Height, Value);
+    }
+
+};
+
+template<> class TftDisplay<void> : public TftElement
+{
+    // Felder
+public:    
+    Delegate<void, Adafruit_GFX*, word, word, word, word>* ContentDrawer;       // Wird aufgerüfen, wenn der Inhalt neu gezeichnet werden soll (gfx, x, y, w, h)
+
+    // Konstruktor
+public:
+    TftDisplay(word left, word top, word width, word height)
+        : TftElement(left, top, width, height), ContentDrawer(0)
+    {
+        
+    }
+
+    // Methoden
+public:
+    // Wird aufgerufen, wenn die Anzeige gedrückt wurde
+    void Touch(word x, word y)
+    {
+
+    }
+
+    // Zeichnet den Inhalt neu
+    void DrawContent()
+    {
+        Draw();
+    }
+    
+private:
+    // Zeichnet die Anzeige
+    void Draw()
+    {
+        if (ContentDrawer != 0) (*ContentDrawer)(Gfx, Left, Top, Width, Height);
     }
 
 };

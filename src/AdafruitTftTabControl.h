@@ -9,6 +9,9 @@
 class TftTabControl : public TftElement
 {
     // Felder
+public:
+    Delegate<void, byte>* TabChangedEvent;          // Wird ausgelöst, wenn ein anderer Tab ausgewählt wurde (Tab)
+
 private:
     byte SelectedTab;           // ausgewählte Seite
     const byte TabCount;        // Anzahl an Seiten

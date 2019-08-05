@@ -9,8 +9,7 @@ class TftRadioButton : public TftElement
 {
     // Felder
 public:
-    Delegate<>* ActivatedEvent;                                                         // Wird ausgelöst, wenn der Auswahlknopf aktiviert wurde
-    Delegate<>* DeactivatedEvent;                                                       // Wird ausgelöst, wenn der Auswahlknopf deaktiviert wurde
+    Delegate<void, bool, bool>* ActivationChangedEvent;                                      // Wird ausgelöst, wenn der Auswahlknopf aktiviert wurde (isActive, wasTouched)
     Delegate<void, Adafruit_GFX*, word, word, bool>* ContentDrawer;                     // Wird aufgerüfen, wenn der Inhalt neu gezeichnet werden soll (gfx, x, y, isActive)
 
 private:
@@ -29,7 +28,7 @@ public:
     virtual void Touch(word x, word y);
 
     // Ändert den Aktivierungszustand
-    void SetActivation(bool value, bool raiseEvent = true);
+    void SetActivation(bool value, bool raiseEvent = true, bool wasTouched = false);
     
     // Zeichnet den Inhalt neu
     void DrawContent();

@@ -17,7 +17,7 @@ void TftSelectBox::Touch(word x, word y)
         if (newValue < MinValue)
             newValue = MaxValue;
     }
-    else if (IsHorizontal ? Right - RockerSize <= x : y <= Left + RockerSize)
+    else if (IsHorizontal ? Right - RockerSize <= x : y <= Top + RockerSize)
     {
         // Wert erhöhen
         newValue++;
