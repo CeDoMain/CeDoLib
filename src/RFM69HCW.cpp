@@ -20,7 +20,8 @@ RFM69HCW::RFM69HCW()
       RegPacketConfig2(0x40),					// NoAes, NoAutoRxRestart, InterPacketdelay = 8 / Bitrate
 	  NeedBoostMode(false),
 	  NeedPA0(false),
-	  TemperatureCalibrationValue(171)
+	  TemperatureCalibrationValue(171),
+	  MessageReceivedEvent(0)
 {
 	
 }

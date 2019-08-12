@@ -36,7 +36,7 @@ void TftTabControl::Touch(word x, word y)
     if (Right - RibbonWidth < x)
     {
         // Button wurde berührt
-        word yTest = Top + ButtonHeight / 2;
+        word yTest = Top + ButtonHeight;
         for (int i = 0; i < TabCount; i++)
         {
             if (y <= yTest)

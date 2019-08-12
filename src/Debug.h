@@ -40,6 +40,9 @@ private:
     static char* SerialReadLineAsync();
 };
 
+void Chrono(char prefix);
+
+
 // nachfolgender Code von http://playground.arduino.cc/Main/Printf
 
 // PrintF mit Formatstring aus dem RAM und Ausgabe im Serial Port

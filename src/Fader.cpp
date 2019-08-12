@@ -28,13 +28,13 @@ void Fader::Update()
         (*FadeEvent)(Value);
 }
 
-void Fader::Start(unsigned short fadeTime, decimal to)
+void Fader::Start(unsigned long fadeTime, decimal to)
 {
     // Startet den Fade vom aktuellen Wert zum neuen Ziel
     Start(fadeTime, Value, to);
 }
 
-void Fader::Start(unsigned short fadeTime, decimal from, decimal to)
+void Fader::Start(unsigned long fadeTime, decimal from, decimal to)
 {
     // Startet den Fade im angegebenen Intervall
     FadeTime = fadeTime;

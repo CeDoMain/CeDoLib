@@ -18,10 +18,10 @@ void TftButton::Update()
 }
 void TftButton::Touch(word x, word y)
 {
+    Draw(true);
     ReleaseTimer.Start();
     if (ClickEvent != 0)
         (*ClickEvent)();
-    Draw(true);
 }
 void TftButton::DrawContent()
 {

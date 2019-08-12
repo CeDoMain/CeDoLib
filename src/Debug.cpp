@@ -131,6 +131,16 @@ char* SerialToValue::SerialReadLineAsync()
 	return 0;
 }
 
+void Chrono(char prefix)
+{
+    static unsigned long lastStamp = 0;
+    unsigned long thisStamp = millis();
+    Serial.print(prefix);
+    Serial.print(' ');
+    Serial.println(thisStamp - lastStamp);
+    lastStamp = thisStamp;
+}
+
 // nachfolgender Code von http://playground.arduino.cc/Main/Printf
 
 void Debug(char* fmt, ... )
